@@ -135,6 +135,17 @@ export default {
     cookieExpiration: 365,
     policyPageUrl: '/privacy-policy',
     showEditorPlaceholder: true,
+    // Layout
+    bannerLayout: 'card',
+    bannerWidth: 'auto',
+    buttonLayout: 'horizontal',
+    // UI Options
+    showDeclineButton: true,
+    showPreferencesButton: true,
+    showCloseButton: false,
+    showCookieIcon: true,
+    iconStyle: 'default',
+    showPolicyLink: true,
     // Categories
     analyticsEnabled: true,
     marketingEnabled: true,
