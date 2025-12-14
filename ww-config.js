@@ -9,6 +9,17 @@ export default {
 
   properties: {
     // ═══════════════════════════════════════════════════════════════
+    // VISIBILITY CONTROLLER
+    // ═══════════════════════════════════════════════════════════════
+    isOpen: {
+      label: { en: "Is Open (Controller)", pt: "Esta Aberto (Controlador)" },
+      type: "OnOff",
+      defaultValue: null,
+      bindable: true,
+      section: "settings",
+    },
+
+    // ═══════════════════════════════════════════════════════════════
     // GENERAL SETTINGS
     // ═══════════════════════════════════════════════════════════════
     consentMode: {

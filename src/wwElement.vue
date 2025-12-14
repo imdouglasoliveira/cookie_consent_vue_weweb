@@ -126,6 +126,8 @@ export default {
     },
   },
   wwDefaultContent: {
+    // Visibility Controller
+    isOpen: null,
     // General
     consentMode: 'opt-in',
     bannerStyle: 'standard',
@@ -182,6 +184,24 @@ export default {
     linkColor: '#3b82f6',
     borderRadius: '12px',
     boxShadow: 'lg',
+  },
+  watch: {
+    'content.isOpen': {
+      handler(newValue) {
+        // Only apply when isOpen is explicitly set (not null/undefined)
+        if (newValue !== null && newValue !== undefined) {
+          if (newValue) {
+            this.showBannerState = true;
+            this.showPreferencesState = false;
+            this.$emit('trigger-event', { name: 'bannerShown', event: { source: 'controller' } });
+          } else {
+            this.showBannerState = false;
+            this.$emit('trigger-event', { name: 'bannerHidden', event: { reason: 'controller' } });
+          }
+        }
+      },
+      immediate: false,
+    },
   },
   mounted() {
     this.checkExistingConsent();
