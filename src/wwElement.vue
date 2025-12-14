@@ -1,5 +1,5 @@
 <template>
-  <div class="cc-host" :style="cssVars">
+  <div class="cc-host" :class="hostClass" :style="cssVars">
     <!-- Editor Placeholder -->
     <div v-if="showPlaceholder" class="cc-editor-placeholder">
       <svg
@@ -98,6 +98,11 @@ export default {
     },
     showManagerState() {
       return this.content.showManager && this.consentGiven && !this.showBannerState && !this.showPreferencesState;
+    },
+    hostClass() {
+      return {
+        'cc-host-fullwidth': this.content.bannerLayout === 'banner',
+      };
     },
     cssVars() {
       const shadowMap = {
@@ -609,6 +614,12 @@ export default {
   min-width: 100px;
   min-height: 50px;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+  &.cc-host-fullwidth {
+    display: block;
+    width: 100%;
+    min-width: 100%;
+  }
 }
 
 .cc-editor-placeholder {
