@@ -175,6 +175,14 @@ export default {
     marketingDescription: 'Used to deliver relevant advertisements and track campaign effectiveness.',
     personalizationLabel: 'Personalization',
     personalizationDescription: 'Remember your preferences and customize your experience.',
+    // Expandable layout labels
+    expandableHowWeUseLabel: 'How we use cookies',
+    expandableHowWeUseDescription: 'We use cookies to improve your experience on our website, analyze traffic, and personalize content.',
+    expandableNecessaryLabel: 'We use necessary cookies',
+    expandableNecessaryDescription: 'These cookies are essential for the website to function properly and cannot be disabled.',
+    expandableAnalyticsLabel: 'Accept analytical cookies',
+    expandableMarketingLabel: 'Accept marketing cookies',
+    expandablePersonalizationLabel: 'Accept personalization cookies',
     // Styling
     backgroundColor: '#ffffff',
     textColor: '#1f2937',
@@ -192,9 +200,6 @@ export default {
     borderRadius: '12px',
     boxShadow: 'lg',
     bannerShape: 'rounded',
-    // Drawer options
-    drawerSide: 'right',
-    drawerOverlay: false,
   },
   watch: {
     'content.isOpen': {

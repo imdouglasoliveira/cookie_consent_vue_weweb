@@ -48,7 +48,7 @@ export default {
           { value: "modal", label: { en: "Modal (Centered)", pt: "Modal (Centralizado)" } },
           { value: "toast", label: { en: "Toast (Snackbar)", pt: "Toast (Snackbar)" } },
           { value: "banner", label: { en: "Banner (Inline)", pt: "Banner (Inline)" } },
-          { value: "drawer", label: { en: "Drawer (Side Panel)", pt: "Drawer (Painel Lateral)" } },
+          { value: "expandable", label: { en: "Expandable List", pt: "Lista Expansivel" } },
           { value: "floating", label: { en: "Floating (Corner)", pt: "Flutuante (Canto)" } },
         ],
       },
@@ -339,6 +339,66 @@ export default {
     },
 
     // ═══════════════════════════════════════════════════════════════
+    // EXPANDABLE LAYOUT LABELS
+    // ═══════════════════════════════════════════════════════════════
+    expandableHowWeUseLabel: {
+      label: { en: "How We Use Cookies Label", pt: "Rotulo Como Usamos Cookies" },
+      type: "Text",
+      defaultValue: "How we use cookies",
+      section: "settings",
+      bindable: true,
+      hidden: (content) => content.bannerLayout !== 'expandable',
+    },
+    expandableHowWeUseDescription: {
+      label: { en: "How We Use Description", pt: "Descricao Como Usamos" },
+      type: "Text",
+      defaultValue: "We use cookies to improve your experience on our website, analyze traffic, and personalize content.",
+      section: "settings",
+      bindable: true,
+      hidden: (content) => content.bannerLayout !== 'expandable',
+    },
+    expandableNecessaryLabel: {
+      label: { en: "Necessary Cookies Label", pt: "Rotulo Cookies Necessarios" },
+      type: "Text",
+      defaultValue: "We use necessary cookies",
+      section: "settings",
+      bindable: true,
+      hidden: (content) => content.bannerLayout !== 'expandable',
+    },
+    expandableNecessaryDescription: {
+      label: { en: "Necessary Description", pt: "Descricao Necessarios" },
+      type: "Text",
+      defaultValue: "These cookies are essential for the website to function properly and cannot be disabled.",
+      section: "settings",
+      bindable: true,
+      hidden: (content) => content.bannerLayout !== 'expandable',
+    },
+    expandableAnalyticsLabel: {
+      label: { en: "Analytics Label (Expandable)", pt: "Rotulo Analytics (Expansivel)" },
+      type: "Text",
+      defaultValue: "Accept analytical cookies",
+      section: "settings",
+      bindable: true,
+      hidden: (content) => content.bannerLayout !== 'expandable',
+    },
+    expandableMarketingLabel: {
+      label: { en: "Marketing Label (Expandable)", pt: "Rotulo Marketing (Expansivel)" },
+      type: "Text",
+      defaultValue: "Accept marketing cookies",
+      section: "settings",
+      bindable: true,
+      hidden: (content) => content.bannerLayout !== 'expandable',
+    },
+    expandablePersonalizationLabel: {
+      label: { en: "Personalization Label (Expandable)", pt: "Rotulo Personalizacao (Expansivel)" },
+      type: "Text",
+      defaultValue: "Accept personalization cookies",
+      section: "settings",
+      bindable: true,
+      hidden: (content) => content.bannerLayout !== 'expandable',
+    },
+
+    // ═══════════════════════════════════════════════════════════════
     // STYLING
     // ═══════════════════════════════════════════════════════════════
     backgroundColor: {
@@ -459,29 +519,6 @@ export default {
       },
     },
 
-    // ═══════════════════════════════════════════════════════════════
-    // DRAWER OPTIONS
-    // ═══════════════════════════════════════════════════════════════
-    drawerSide: {
-      label: { en: "Drawer Side", pt: "Lado do Drawer" },
-      type: "TextSelect",
-      defaultValue: "right",
-      section: "settings",
-      hidden: (content) => content.bannerLayout !== 'drawer',
-      options: {
-        options: [
-          { value: "left", label: { en: "Left", pt: "Esquerda" } },
-          { value: "right", label: { en: "Right", pt: "Direita" } },
-        ],
-      },
-    },
-    drawerOverlay: {
-      label: { en: "Show Overlay", pt: "Exibir Overlay" },
-      type: "OnOff",
-      defaultValue: false,
-      section: "settings",
-      hidden: (content) => content.bannerLayout !== 'drawer',
-    },
   },
 
   // ═══════════════════════════════════════════════════════════════
