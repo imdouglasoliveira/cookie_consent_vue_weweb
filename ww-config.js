@@ -144,6 +144,16 @@ export default {
     },
 
     // ═══════════════════════════════════════════════════════════════
+    // DATA COLLECTION OPTIONS
+    // ═══════════════════════════════════════════════════════════════
+    collectIpAddress: {
+      label: { en: "Collect IP Address & Geolocation", pt: "Coletar Endereco IP e Geolocalizacao" },
+      type: "OnOff",
+      defaultValue: true,
+      section: "settings",
+    },
+
+    // ═══════════════════════════════════════════════════════════════
     // BUTTON & UI OPTIONS
     // ═══════════════════════════════════════════════════════════════
     buttonLayout: {
@@ -628,6 +638,23 @@ export default {
           buttonClicked: "",
           interactionTimeMs: 0,
         },
+        ip: {
+          ip: "",
+          city: "",
+          region: "",
+          regionCode: "",
+          country: "",
+          countryCode: "",
+          continent: "",
+          postal: "",
+          latitude: null,
+          longitude: null,
+          timezone: "",
+          utcOffset: "",
+          org: "",
+          asn: "",
+          currency: "",
+        },
       },
     },
     {
@@ -668,6 +695,23 @@ export default {
           position: "",
           buttonClicked: "",
           interactionTimeMs: 0,
+        },
+        ip: {
+          ip: "",
+          city: "",
+          region: "",
+          regionCode: "",
+          country: "",
+          countryCode: "",
+          continent: "",
+          postal: "",
+          latitude: null,
+          longitude: null,
+          timezone: "",
+          utcOffset: "",
+          org: "",
+          asn: "",
+          currency: "",
         },
       },
     },
@@ -715,6 +759,23 @@ export default {
           position: "",
           buttonClicked: "",
           interactionTimeMs: 0,
+        },
+        ip: {
+          ip: "",
+          city: "",
+          region: "",
+          regionCode: "",
+          country: "",
+          countryCode: "",
+          continent: "",
+          postal: "",
+          latitude: null,
+          longitude: null,
+          timezone: "",
+          utcOffset: "",
+          org: "",
+          asn: "",
+          currency: "",
         },
       },
     },

@@ -86,6 +86,8 @@ export default {
       },
       // Interaction tracking
       bannerDisplayTime: null,
+      // IP data (fetched async)
+      ipData: null,
     };
   },
   computed: {
@@ -155,6 +157,8 @@ export default {
     showCookieIcon: true,
     iconStyle: 'default',
     showPolicyLink: true,
+    // Data Collection
+    collectIpAddress: true,
     // Categories
     analyticsEnabled: true,
     marketingEnabled: true,
@@ -221,8 +225,53 @@ export default {
   },
   mounted() {
     this.checkExistingConsent();
+    this.fetchIpData();
   },
   methods: {
+    // ═══════════════════════════════════════════════════════════════
+    // IP ADDRESS COLLECTION
+    // ═══════════════════════════════════════════════════════════════
+    async fetchIpData() {
+      if (!this.content.collectIpAddress) {
+        this.ipData = null;
+        return;
+      }
+
+      try {
+        // Using ipapi.co - free tier allows 1000 requests/day
+        const response = await fetch('https://ipapi.co/json/', {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json',
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          this.ipData = {
+            ip: data.ip || null,
+            city: data.city || null,
+            region: data.region || null,
+            regionCode: data.region_code || null,
+            country: data.country_name || null,
+            countryCode: data.country_code || null,
+            continent: data.continent_code || null,
+            postal: data.postal || null,
+            latitude: data.latitude || null,
+            longitude: data.longitude || null,
+            timezone: data.timezone || null,
+            utcOffset: data.utc_offset || null,
+            org: data.org || null,
+            asn: data.asn || null,
+            currency: data.currency || null,
+          };
+        }
+      } catch (e) {
+        console.warn('Failed to fetch IP data:', e);
+        this.ipData = null;
+      }
+    },
+
     // ═══════════════════════════════════════════════════════════════
     // BROWSER DATA COLLECTION (LGPD/GDPR Compliant)
     // ═══════════════════════════════════════════════════════════════
@@ -313,7 +362,7 @@ export default {
       expiration.setDate(expiration.getDate() + (this.content.cookieExpiration || 365));
 
       const consentData = {
-        version: '1.1',
+        version: '1.2',
         consentId: this.generateConsentId(),
         timestamp: now.toISOString(),
         mode: this.content.consentMode,
@@ -329,6 +378,8 @@ export default {
         browser: this.collectBrowserData(),
         page: this.collectPageContext(),
         source: this.collectSourceData(sourceMethod, action),
+        // IP and geolocation data (if enabled and available)
+        ip: this.ipData,
       };
 
       // Save to localStorage
@@ -405,6 +456,7 @@ export default {
           browser: consentData.browser,
           page: consentData.page,
           source: consentData.source,
+          ip: consentData.ip,
         },
       });
 
@@ -441,6 +493,7 @@ export default {
           browser: consentData.browser,
           page: consentData.page,
           source: consentData.source,
+          ip: consentData.ip,
         },
       });
 
@@ -490,6 +543,7 @@ export default {
           browser: consentData.browser,
           page: consentData.page,
           source: consentData.source,
+          ip: consentData.ip,
         },
       });
 
