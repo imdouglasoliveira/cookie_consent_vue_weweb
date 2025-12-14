@@ -9,6 +9,17 @@ export default {
 
   properties: {
     // ═══════════════════════════════════════════════════════════════
+    // VISIBILITY CONTROLLER
+    // ═══════════════════════════════════════════════════════════════
+    isOpen: {
+      label: { en: "Is Open (Controller)", pt: "Esta Aberto (Controlador)" },
+      type: "OnOff",
+      defaultValue: null,
+      bindable: true,
+      section: "settings",
+    },
+
+    // ═══════════════════════════════════════════════════════════════
     // GENERAL SETTINGS
     // ═══════════════════════════════════════════════════════════════
     consentMode: {
@@ -24,6 +35,20 @@ export default {
         ],
       },
     },
+    bannerLayout: {
+      label: { en: "Banner Layout", pt: "Layout do Banner" },
+      type: "TextSelect",
+      defaultValue: "card",
+      section: "settings",
+      options: {
+        options: [
+          { value: "bar", label: { en: "Bar (Full Width)", pt: "Barra (Largura Total)" } },
+          { value: "card", label: { en: "Card (Floating)", pt: "Card (Flutuante)" } },
+          { value: "popup", label: { en: "Popup (Compact)", pt: "Popup (Compacto)" } },
+          { value: "modal", label: { en: "Modal (Centered)", pt: "Modal (Centralizado)" } },
+        ],
+      },
+    },
     bannerStyle: {
       label: { en: "Banner Style", pt: "Estilo do Banner" },
       type: "TextSelect",
@@ -34,6 +59,23 @@ export default {
           { value: "minimal", label: { en: "Minimal", pt: "Minimo" } },
           { value: "standard", label: { en: "Standard", pt: "Padrao" } },
           { value: "detailed", label: { en: "Detailed", pt: "Detalhado" } },
+        ],
+      },
+    },
+    bannerWidth: {
+      label: { en: "Banner Width", pt: "Largura do Banner" },
+      type: "TextSelect",
+      defaultValue: "480",
+      section: "settings",
+      hidden: (content) => content.bannerLayout === 'bar',
+      options: {
+        options: [
+          { value: "320", label: { en: "Small (320px)", pt: "Pequeno (320px)" } },
+          { value: "400", label: { en: "Compact (400px)", pt: "Compacto (400px)" } },
+          { value: "480", label: { en: "Medium (480px)", pt: "Medio (480px)" } },
+          { value: "560", label: { en: "Standard (560px)", pt: "Padrao (560px)" } },
+          { value: "640", label: { en: "Large (640px)", pt: "Grande (640px)" } },
+          { value: "auto", label: { en: "Auto", pt: "Automatico" } },
         ],
       },
     },
@@ -92,6 +134,68 @@ export default {
     },
     showEditorPlaceholder: {
       label: { en: "Show Editor Placeholder", pt: "Exibir Placeholder no Editor" },
+      type: "OnOff",
+      defaultValue: true,
+      section: "settings",
+    },
+
+    // ═══════════════════════════════════════════════════════════════
+    // BUTTON & UI OPTIONS
+    // ═══════════════════════════════════════════════════════════════
+    buttonLayout: {
+      label: { en: "Button Layout", pt: "Layout dos Botoes" },
+      type: "TextSelect",
+      defaultValue: "horizontal",
+      section: "settings",
+      options: {
+        options: [
+          { value: "horizontal", label: { en: "Horizontal", pt: "Horizontal" } },
+          { value: "vertical", label: { en: "Vertical (Stacked)", pt: "Vertical (Empilhado)" } },
+          { value: "inline", label: { en: "Inline with Text", pt: "Inline com Texto" } },
+        ],
+      },
+    },
+    showDeclineButton: {
+      label: { en: "Show Decline Button", pt: "Exibir Botao Recusar" },
+      type: "OnOff",
+      defaultValue: true,
+      section: "settings",
+    },
+    showPreferencesButton: {
+      label: { en: "Show Preferences Button", pt: "Exibir Botao Preferencias" },
+      type: "OnOff",
+      defaultValue: true,
+      section: "settings",
+    },
+    showCloseButton: {
+      label: { en: "Show Close Button (X)", pt: "Exibir Botao Fechar (X)" },
+      type: "OnOff",
+      defaultValue: false,
+      section: "settings",
+    },
+    showCookieIcon: {
+      label: { en: "Show Cookie Icon", pt: "Exibir Icone de Cookie" },
+      type: "OnOff",
+      defaultValue: true,
+      section: "settings",
+    },
+    iconStyle: {
+      label: { en: "Icon Style", pt: "Estilo do Icone" },
+      type: "TextSelect",
+      defaultValue: "default",
+      section: "settings",
+      hidden: (content) => !content.showCookieIcon,
+      options: {
+        options: [
+          { value: "default", label: { en: "Default Cookie", pt: "Cookie Padrao" } },
+          { value: "shield", label: { en: "Shield (Privacy)", pt: "Escudo (Privacidade)" } },
+          { value: "lock", label: { en: "Lock (Security)", pt: "Cadeado (Seguranca)" } },
+          { value: "settings", label: { en: "Settings Gear", pt: "Engrenagem" } },
+        ],
+      },
+    },
+    showPolicyLink: {
+      label: { en: "Show Policy Link", pt: "Exibir Link de Politica" },
       type: "OnOff",
       defaultValue: true,
       section: "settings",
@@ -403,7 +507,7 @@ export default {
   triggerEvents: [
     {
       name: "consentGiven",
-      label: { en: "On Consent Given", pt: "Ao Dar Consentimento" },
+      label: { en: "Cookie: User Accepted All Cookies", pt: "Cookie: Usuario Aceitou Todos os Cookies" },
       event: {
         consentId: "",
         categories: {
@@ -417,7 +521,7 @@ export default {
     },
     {
       name: "consentDeclined",
-      label: { en: "On Consent Declined", pt: "Ao Recusar Consentimento" },
+      label: { en: "Cookie: User Declined All Cookies", pt: "Cookie: Usuario Recusou Todos os Cookies" },
       event: {
         consentId: "",
         timestamp: "",
@@ -425,7 +529,7 @@ export default {
     },
     {
       name: "preferencesUpdated",
-      label: { en: "On Preferences Updated", pt: "Ao Atualizar Preferencias" },
+      label: { en: "Cookie: User Saved Custom Preferences", pt: "Cookie: Usuario Salvou Preferencias Personalizadas" },
       event: {
         consentId: "",
         categories: {
@@ -439,29 +543,29 @@ export default {
     },
     {
       name: "bannerShown",
-      label: { en: "On Banner Shown", pt: "Ao Exibir Banner" },
+      label: { en: "Cookie: Banner Displayed", pt: "Cookie: Banner Exibido" },
       event: {},
     },
     {
       name: "bannerHidden",
-      label: { en: "On Banner Hidden", pt: "Ao Ocultar Banner" },
+      label: { en: "Cookie: Banner Closed", pt: "Cookie: Banner Fechado" },
       event: {
         reason: "",
       },
     },
     {
       name: "preferencesOpened",
-      label: { en: "On Preferences Opened", pt: "Ao Abrir Preferencias" },
+      label: { en: "Cookie: Preferences Modal Opened", pt: "Cookie: Modal de Preferencias Aberto" },
       event: {},
     },
     {
       name: "preferencesClosed",
-      label: { en: "On Preferences Closed", pt: "Ao Fechar Preferencias" },
+      label: { en: "Cookie: Preferences Modal Closed", pt: "Cookie: Modal de Preferencias Fechado" },
       event: {},
     },
     {
       name: "consentStatusRetrieved",
-      label: { en: "On Consent Status Retrieved", pt: "Ao Obter Status do Consentimento" },
+      label: { en: "Cookie: Consent Status Retrieved", pt: "Cookie: Status do Consentimento Obtido" },
       event: {
         hasConsent: false,
         consent: {},

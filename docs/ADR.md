@@ -265,18 +265,24 @@ actions: [
 ]
 ```
 
-**Trigger Events**:
+**Trigger Events** (prefixed with "Cookie:" for clear identification in WeWeb):
 ```javascript
 triggerEvents: [
-  { name: 'consentGiven', event: { categories: {}, timestamp: '' } },
-  { name: 'consentDeclined', event: { timestamp: '' } },
-  { name: 'preferencesUpdated', event: { categories: {}, timestamp: '' } },
-  { name: 'bannerShown', event: {} },
-  { name: 'bannerHidden', event: { reason: '' } },
-  { name: 'preferencesOpened', event: {} },
-  { name: 'preferencesClosed', event: {} }
+  { name: 'consentGiven', label: 'Cookie: User Accepted All Cookies', event: { consentId, categories, timestamp } },
+  { name: 'consentDeclined', label: 'Cookie: User Declined All Cookies', event: { consentId, timestamp } },
+  { name: 'preferencesUpdated', label: 'Cookie: User Saved Custom Preferences', event: { consentId, categories, timestamp } },
+  { name: 'bannerShown', label: 'Cookie: Banner Displayed', event: { source? } },
+  { name: 'bannerHidden', label: 'Cookie: Banner Closed', event: { reason } },
+  { name: 'preferencesOpened', label: 'Cookie: Preferences Modal Opened', event: {} },
+  { name: 'preferencesClosed', label: 'Cookie: Preferences Modal Closed', event: {} },
+  { name: 'consentStatusRetrieved', label: 'Cookie: Consent Status Retrieved', event: { hasConsent, consent } }
 ]
 ```
+
+**Naming Convention Rationale**:
+- All labels prefixed with "Cookie:" for easy filtering in WeWeb workflow dropdown
+- Labels describe the user action clearly (e.g., "User Accepted All Cookies" vs just "Consent Given")
+- Internal event names remain camelCase for code consistency
 
 ### 9. Position Options
 
