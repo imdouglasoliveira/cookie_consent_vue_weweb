@@ -168,15 +168,18 @@ Returns current consent status for all categories.
 
 ## Trigger Events
 
-| Event | Payload | Description |
-|-------|---------|-------------|
-| `consentGiven` | `{ categories, timestamp }` | Fired when user gives consent |
-| `consentDeclined` | `{ timestamp }` | Fired when user declines all |
-| `preferencesUpdated` | `{ categories, timestamp }` | Fired when preferences are saved |
-| `bannerShown` | `{}` | Fired when banner becomes visible |
-| `bannerHidden` | `{ reason }` | Fired when banner is hidden |
-| `preferencesOpened` | `{}` | Fired when preferences modal opens |
-| `preferencesClosed` | `{}` | Fired when preferences modal closes |
+All trigger events are prefixed with "Cookie:" for easy identification in WeWeb workflows.
+
+| Event Name | Label (in WeWeb) | Payload | Description |
+|------------|------------------|---------|-------------|
+| `consentGiven` | Cookie: User Accepted All Cookies | `{ consentId, categories, timestamp }` | User clicked "Accept All" |
+| `consentDeclined` | Cookie: User Declined All Cookies | `{ consentId, timestamp }` | User clicked "Decline" |
+| `preferencesUpdated` | Cookie: User Saved Custom Preferences | `{ consentId, categories, timestamp }` | User saved custom preferences |
+| `bannerShown` | Cookie: Banner Displayed | `{ source? }` | Banner became visible |
+| `bannerHidden` | Cookie: Banner Closed | `{ reason }` | Banner was closed (reason: acceptAll, declineAll, savePreferences, manual, controller) |
+| `preferencesOpened` | Cookie: Preferences Modal Opened | `{}` | Preferences modal opened |
+| `preferencesClosed` | Cookie: Preferences Modal Closed | `{}` | Preferences modal closed |
+| `consentStatusRetrieved` | Cookie: Consent Status Retrieved | `{ hasConsent, consent }` | Consent status was retrieved via action |
 
 ### Event Payload Examples
 

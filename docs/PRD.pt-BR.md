@@ -230,22 +230,29 @@ O componente DEVE expor estas acoes para workflows WeWeb:
 #### RF-10: Eventos de Trigger
 **Prioridade:** Critica
 
-O componente DEVE emitir estes eventos para workflows WeWeb:
+O componente DEVE emitir estes eventos para workflows WeWeb. Todos os eventos sao prefixados com "Cookie:" para facil identificacao no editor de workflow:
 
-| Evento | Payload | Quando Dispara |
-|--------|---------|----------------|
-| `consentGiven` | `{ categories, timestamp }` | Usuario aceita quaisquer cookies |
-| `consentDeclined` | `{ timestamp }` | Usuario recusa todos |
-| `preferencesUpdated` | `{ categories, timestamp }` | Preferencias salvas |
-| `bannerShown` | `{}` | Banner se torna visivel |
-| `bannerHidden` | `{ reason }` | Banner e ocultado |
-| `preferencesOpened` | `{}` | Modal de preferencias abre |
-| `preferencesClosed` | `{}` | Modal de preferencias fecha |
+| Nome do Evento | Label (no WeWeb) | Payload | Quando Dispara |
+|----------------|------------------|---------|----------------|
+| `consentGiven` | Cookie: Usuario Aceitou Todos os Cookies | `{ consentId, categories, timestamp }` | Usuario clica em "Aceitar Todos" |
+| `consentDeclined` | Cookie: Usuario Recusou Todos os Cookies | `{ consentId, timestamp }` | Usuario clica em "Recusar" |
+| `preferencesUpdated` | Cookie: Usuario Salvou Preferencias Personalizadas | `{ consentId, categories, timestamp }` | Usuario salva preferencias customizadas |
+| `bannerShown` | Cookie: Banner Exibido | `{ source? }` | Banner se torna visivel |
+| `bannerHidden` | Cookie: Banner Fechado | `{ reason }` | Banner e fechado |
+| `preferencesOpened` | Cookie: Modal de Preferencias Aberto | `{}` | Modal de preferencias abre |
+| `preferencesClosed` | Cookie: Modal de Preferencias Fechado | `{}` | Modal de preferencias fecha |
+| `consentStatusRetrieved` | Cookie: Status do Consentimento Obtido | `{ hasConsent, consent }` | Status de consentimento obtido via action |
+
+**Convencao de Nomenclatura:**
+- Todos os labels prefixados com "Cookie:" para facil filtragem no dropdown do WeWeb
+- Labels descrevem a acao do usuario claramente (ex: "Usuario Aceitou Todos os Cookies" vs apenas "Consentimento Dado")
+- Valores de reason para `bannerHidden`: `acceptAll`, `declineAll`, `savePreferences`, `manual`, `controller`
 
 **Criterios de Aceitacao:**
 - [ ] Eventos disparam nos momentos corretos
 - [ ] Payloads contem dados especificados
-- [ ] Eventos aparecem no editor de workflow WeWeb
+- [ ] Eventos aparecem no editor de workflow WeWeb com prefixo "Cookie:" claro
+- [ ] Labels sao descritivos o suficiente para entender sem documentacao
 
 ### 3.3 Customizacao
 
