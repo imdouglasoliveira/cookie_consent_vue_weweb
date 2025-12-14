@@ -84,6 +84,8 @@ export default {
         marketing: false,
         personalization: false,
       },
+      // Interaction tracking
+      bannerDisplayTime: null,
     };
   },
   computed: {
@@ -208,6 +210,65 @@ export default {
   },
   methods: {
     // ═══════════════════════════════════════════════════════════════
+    // BROWSER DATA COLLECTION (LGPD/GDPR Compliant)
+    // ═══════════════════════════════════════════════════════════════
+    collectBrowserData() {
+      try {
+        return {
+          userAgent: navigator.userAgent || '',
+          language: navigator.language || '',
+          languages: navigator.languages ? [...navigator.languages] : [],
+          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || '',
+          timezoneOffset: new Date().getTimezoneOffset(),
+          screenSize: `${screen.width || 0}x${screen.height || 0}`,
+          viewportSize: `${window.innerWidth || 0}x${window.innerHeight || 0}`,
+          colorDepth: screen.colorDepth || 0,
+          pixelRatio: window.devicePixelRatio || 1,
+          cookieEnabled: navigator.cookieEnabled || false,
+          doNotTrack: navigator.doNotTrack || 'unspecified',
+          online: navigator.onLine !== undefined ? navigator.onLine : true,
+          platform: navigator.platform || '',
+          vendor: navigator.vendor || '',
+          touchSupport: 'ontouchstart' in window || navigator.maxTouchPoints > 0,
+          maxTouchPoints: navigator.maxTouchPoints || 0,
+        };
+      } catch (e) {
+        console.warn('Failed to collect browser data:', e);
+        return {};
+      }
+    },
+
+    collectPageContext() {
+      try {
+        return {
+          url: window.location.href || '',
+          hostname: window.location.hostname || '',
+          pathname: window.location.pathname || '',
+          referrer: document.referrer || '',
+          title: document.title || '',
+        };
+      } catch (e) {
+        console.warn('Failed to collect page context:', e);
+        return {};
+      }
+    },
+
+    collectSourceData(method, buttonClicked) {
+      const interactionTimeMs = this.bannerDisplayTime
+        ? Date.now() - this.bannerDisplayTime
+        : null;
+
+      return {
+        method,
+        style: this.content.bannerStyle || 'standard',
+        layout: this.content.bannerLayout || 'card',
+        position: this.content.position || 'bottom-left',
+        buttonClicked,
+        interactionTimeMs,
+      };
+    },
+
+    // ═══════════════════════════════════════════════════════════════
     // STORAGE METHODS
     // ═══════════════════════════════════════════════════════════════
     generateConsentId() {
@@ -232,13 +293,13 @@ export default {
       return null;
     },
 
-    saveConsent(categories, action = 'custom') {
+    saveConsent(categories, action = 'custom', sourceMethod = 'banner') {
       const now = new Date();
       const expiration = new Date(now);
       expiration.setDate(expiration.getDate() + (this.content.cookieExpiration || 365));
 
       const consentData = {
-        version: '1.0',
+        version: '1.1',
         consentId: this.generateConsentId(),
         timestamp: now.toISOString(),
         mode: this.content.consentMode,
@@ -250,6 +311,10 @@ export default {
           personalization: categories.personalization || false,
         },
         expiration: expiration.toISOString(),
+        // Extended data collection
+        browser: this.collectBrowserData(),
+        page: this.collectPageContext(),
+        source: this.collectSourceData(sourceMethod, action),
       };
 
       // Save to localStorage
@@ -294,6 +359,7 @@ export default {
         // Show banner based on consent mode
         if (this.content.consentMode !== 'informational') {
           this.showBannerState = true;
+          this.bannerDisplayTime = Date.now(); // Start tracking interaction time
           this.$emit('trigger-event', { name: 'bannerShown', event: {} });
         }
       }
@@ -302,14 +368,15 @@ export default {
     // ═══════════════════════════════════════════════════════════════
     // EVENT HANDLERS
     // ═══════════════════════════════════════════════════════════════
-    handleAcceptAll() {
+    handleAcceptAll(fromPreferences = false) {
       const categories = {
         analytics: this.content.analyticsEnabled,
         marketing: this.content.marketingEnabled,
         personalization: this.content.personalizationEnabled,
       };
 
-      const consentData = this.saveConsent(categories, 'acceptAll');
+      const sourceMethod = fromPreferences ? 'preferences' : 'banner';
+      const consentData = this.saveConsent(categories, 'acceptAll', sourceMethod);
       this.consentGiven = true;
       this.tempPreferences = { ...categories };
       this.showBannerState = false;
@@ -321,6 +388,9 @@ export default {
           consentId: consentData.consentId,
           categories: consentData.categories,
           timestamp: consentData.timestamp,
+          browser: consentData.browser,
+          page: consentData.page,
+          source: consentData.source,
         },
       });
 
@@ -329,17 +399,21 @@ export default {
         event: { reason: 'acceptAll' },
       });
 
+      // Reset interaction time
+      this.bannerDisplayTime = null;
+
       this.enableScripts(categories);
     },
 
-    handleDeclineAll() {
+    handleDeclineAll(fromPreferences = false) {
       const categories = {
         analytics: false,
         marketing: false,
         personalization: false,
       };
 
-      const consentData = this.saveConsent(categories, 'declineAll');
+      const sourceMethod = fromPreferences ? 'preferences' : 'banner';
+      const consentData = this.saveConsent(categories, 'declineAll', sourceMethod);
       this.consentGiven = true;
       this.tempPreferences = { ...categories };
       this.showBannerState = false;
@@ -350,6 +424,9 @@ export default {
         event: {
           consentId: consentData.consentId,
           timestamp: consentData.timestamp,
+          browser: consentData.browser,
+          page: consentData.page,
+          source: consentData.source,
         },
       });
 
@@ -357,6 +434,9 @@ export default {
         name: 'bannerHidden',
         event: { reason: 'declineAll' },
       });
+
+      // Reset interaction time
+      this.bannerDisplayTime = null;
     },
 
     handleOpenPreferences() {
@@ -382,7 +462,7 @@ export default {
     },
 
     handleSavePreferences() {
-      const consentData = this.saveConsent(this.tempPreferences, 'savePreferences');
+      const consentData = this.saveConsent(this.tempPreferences, 'savePreferences', 'preferences');
       this.consentGiven = true;
       this.showPreferencesState = false;
       this.showBannerState = false;
@@ -393,6 +473,9 @@ export default {
           consentId: consentData.consentId,
           categories: consentData.categories,
           timestamp: consentData.timestamp,
+          browser: consentData.browser,
+          page: consentData.page,
+          source: consentData.source,
         },
       });
 
@@ -400,6 +483,9 @@ export default {
         name: 'bannerHidden',
         event: { reason: 'savePreferences' },
       });
+
+      // Reset interaction time
+      this.bannerDisplayTime = null;
 
       this.enableScripts(this.tempPreferences);
     },
@@ -446,6 +532,7 @@ export default {
     showBanner() {
       this.showBannerState = true;
       this.showPreferencesState = false;
+      this.bannerDisplayTime = Date.now(); // Start tracking interaction time
       this.$emit('trigger-event', { name: 'bannerShown', event: {} });
     },
 
@@ -493,6 +580,7 @@ export default {
         personalization: false,
       };
       this.showBannerState = true;
+      this.bannerDisplayTime = Date.now(); // Start tracking interaction time
       this.$emit('trigger-event', { name: 'bannerShown', event: {} });
     },
 

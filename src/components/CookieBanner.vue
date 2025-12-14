@@ -295,11 +295,51 @@ export default {
           margin: 0;
           font-size: 14px;
         }
+
+        // Detailed style: horizontal toggles in bar layout
+        .cc-banner-categories {
+          display: flex;
+          flex-direction: row;
+          flex-wrap: wrap;
+          gap: 16px;
+          margin: 12px 0 0 0;
+          padding: 0;
+          background: transparent;
+          border-radius: 0;
+        }
       }
 
       .cc-banner-actions {
         flex-shrink: 0;
         margin: 0;
+      }
+
+      // When detailed style, adjust layout for two rows
+      &.cc-style-detailed {
+        flex-wrap: wrap;
+
+        .cc-banner-content {
+          flex: 1 1 100%;
+          display: flex;
+          align-items: center;
+          gap: 16px;
+
+          .cc-banner-title {
+            display: none;
+          }
+
+          .cc-banner-message {
+            flex: 1;
+          }
+
+          .cc-banner-categories {
+            flex: 0 0 auto;
+          }
+        }
+
+        .cc-banner-actions {
+          flex: 0 0 auto;
+        }
       }
     }
   }
