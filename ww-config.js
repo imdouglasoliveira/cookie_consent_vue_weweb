@@ -46,6 +46,10 @@ export default {
           { value: "card", label: { en: "Card (Floating)", pt: "Card (Flutuante)" } },
           { value: "popup", label: { en: "Popup (Compact)", pt: "Popup (Compacto)" } },
           { value: "modal", label: { en: "Modal (Centered)", pt: "Modal (Centralizado)" } },
+          { value: "toast", label: { en: "Toast (Snackbar)", pt: "Toast (Snackbar)" } },
+          { value: "banner", label: { en: "Banner (Inline)", pt: "Banner (Inline)" } },
+          { value: "drawer", label: { en: "Drawer (Side Panel)", pt: "Drawer (Painel Lateral)" } },
+          { value: "floating", label: { en: "Floating (Corner)", pt: "Flutuante (Canto)" } },
         ],
       },
     },
@@ -440,6 +444,43 @@ export default {
           { value: "xl", label: { en: "Extra Large", pt: "Extra Grande" } },
         ],
       },
+    },
+    bannerShape: {
+      label: { en: "Banner Shape", pt: "Formato do Banner" },
+      type: "TextSelect",
+      defaultValue: "rounded",
+      section: "style",
+      options: {
+        options: [
+          { value: "rounded", label: { en: "Rounded (Default)", pt: "Arredondado (Padrao)" } },
+          { value: "pill", label: { en: "Pill (Capsule)", pt: "Pilula (Capsula)" } },
+          { value: "square", label: { en: "Square (Sharp)", pt: "Quadrado (Reto)" } },
+        ],
+      },
+    },
+
+    // ═══════════════════════════════════════════════════════════════
+    // DRAWER OPTIONS
+    // ═══════════════════════════════════════════════════════════════
+    drawerSide: {
+      label: { en: "Drawer Side", pt: "Lado do Drawer" },
+      type: "TextSelect",
+      defaultValue: "right",
+      section: "settings",
+      hidden: (content) => content.bannerLayout !== 'drawer',
+      options: {
+        options: [
+          { value: "left", label: { en: "Left", pt: "Esquerda" } },
+          { value: "right", label: { en: "Right", pt: "Direita" } },
+        ],
+      },
+    },
+    drawerOverlay: {
+      label: { en: "Show Overlay", pt: "Exibir Overlay" },
+      type: "OnOff",
+      defaultValue: false,
+      section: "settings",
+      hidden: (content) => content.bannerLayout !== 'drawer',
     },
   },
 
