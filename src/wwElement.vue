@@ -189,7 +189,7 @@ export default {
     bannerShape: 'rounded',
     // Drawer options
     drawerSide: 'right',
-    drawerOverlay: true,
+    drawerOverlay: false,
   },
   watch: {
     'content.isOpen': {

@@ -471,18 +471,20 @@ export default {
     padding: 0;
 
     .cc-banner {
-      max-width: 100%;
-      border-radius: 0;
-      box-shadow: none;
+      max-width: 100% !important;
+      width: 100%;
+      border-radius: 0 !important;
+      box-shadow: none !important;
       border-left: none;
       border-right: none;
-      display: flex;
-      align-items: center;
+      display: flex !important;
+      flex-direction: row !important;
+      align-items: center !important;
       gap: 24px;
       padding: 12px 24px;
 
       .cc-banner-icon {
-        margin-bottom: 0;
+        margin: 0 !important;
         flex-shrink: 0;
 
         svg {
@@ -493,25 +495,27 @@ export default {
 
       .cc-banner-content {
         flex: 1;
-        text-align: left;
+        text-align: left !important;
 
         .cc-banner-title {
-          display: none;
+          display: none !important;
         }
 
         .cc-banner-message {
-          margin: 0;
+          margin: 0 !important;
           font-size: 14px;
+          display: inline;
         }
 
         .cc-banner-categories {
-          display: none;
+          display: none !important;
         }
       }
 
       .cc-banner-actions {
         flex-shrink: 0;
-        margin: 0;
+        margin: 0 !important;
+        flex-direction: row !important;
       }
 
       .cc-close-btn {

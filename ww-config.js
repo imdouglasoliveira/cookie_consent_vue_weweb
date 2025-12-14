@@ -478,7 +478,7 @@ export default {
     drawerOverlay: {
       label: { en: "Show Overlay", pt: "Exibir Overlay" },
       type: "OnOff",
-      defaultValue: true,
+      defaultValue: false,
       section: "settings",
       hidden: (content) => content.bannerLayout !== 'drawer',
     },
