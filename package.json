@@ -1,0 +1,22 @@
+{
+  "name": "cookie-consent",
+  "version": "1.0.0",
+  "description": "GDPR/LGPD compliant cookie consent component for WeWeb",
+  "scripts": {
+    "serve": "weweb serve",
+    "build": "weweb build"
+  },
+  "devDependencies": {
+    "@weweb/cli": "latest"
+  },
+  "keywords": [
+    "weweb",
+    "cookie",
+    "consent",
+    "gdpr",
+    "lgpd",
+    "privacy"
+  ],
+  "author": "",
+  "license": "MIT"
+}
