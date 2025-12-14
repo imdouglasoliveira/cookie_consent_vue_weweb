@@ -186,6 +186,10 @@ export default {
     linkColor: '#3b82f6',
     borderRadius: '12px',
     boxShadow: 'lg',
+    bannerShape: 'rounded',
+    // Drawer options
+    drawerSide: 'right',
+    drawerOverlay: true,
   },
   watch: {
     'content.isOpen': {

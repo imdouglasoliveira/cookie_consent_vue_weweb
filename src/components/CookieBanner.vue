@@ -1,13 +1,20 @@
 <template>
   <div
     class="cc-banner-container"
-    :class="[positionClass, layoutClass]"
+    :class="[positionClass, layoutClass, shapeClass, drawerSideClass]"
     :style="containerStyle"
   >
     <!-- Modal Overlay (only for modal layout) -->
     <div
       v-if="content.bannerLayout === 'modal'"
       class="cc-modal-overlay"
+      @click="handleOverlayClick"
+    ></div>
+
+    <!-- Drawer Overlay -->
+    <div
+      v-if="content.bannerLayout === 'drawer' && content.drawerOverlay"
+      class="cc-drawer-overlay"
       @click="handleOverlayClick"
     ></div>
 
@@ -173,6 +180,14 @@ export default {
     },
     buttonLayoutClass() {
       return `cc-buttons-${this.content.buttonLayout || 'horizontal'}`;
+    },
+    shapeClass() {
+      const shape = this.content.bannerShape || 'rounded';
+      return shape !== 'rounded' ? `cc-shape-${shape}` : '';
+    },
+    drawerSideClass() {
+      if (this.content.bannerLayout !== 'drawer') return '';
+      return `cc-drawer-${this.content.drawerSide || 'right'}`;
     },
     containerStyle() {
       return {};
@@ -378,6 +393,264 @@ export default {
     .cc-banner {
       position: relative;
       z-index: 10001;
+    }
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // LAYOUT: TOAST (Snackbar / Pill)
+  // ═══════════════════════════════════════════════════════════════
+  &.cc-layout-toast {
+    .cc-banner {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 16px;
+      max-width: 600px;
+
+      .cc-banner-icon {
+        margin: 0;
+        flex-shrink: 0;
+
+        svg {
+          width: 20px;
+          height: 20px;
+        }
+      }
+
+      .cc-banner-content {
+        flex: 1;
+        min-width: 0;
+        text-align: left;
+      }
+
+      .cc-banner-title {
+        display: none;
+      }
+
+      .cc-banner-message {
+        margin: 0;
+        font-size: 14px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        @media (max-width: 480px) {
+          white-space: normal;
+        }
+      }
+
+      .cc-banner-categories {
+        display: none;
+      }
+
+      .cc-banner-actions {
+        flex-shrink: 0;
+        gap: 8px;
+        margin: 0;
+
+        .cc-btn {
+          padding: 8px 16px;
+          font-size: 13px;
+        }
+      }
+
+      .cc-close-btn {
+        position: static;
+        order: 99;
+        margin-left: 4px;
+      }
+    }
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // LAYOUT: BANNER (Inline, non-fixed)
+  // ═══════════════════════════════════════════════════════════════
+  &.cc-layout-banner {
+    position: relative !important;
+    width: 100%;
+    padding: 0;
+
+    .cc-banner {
+      max-width: 100%;
+      border-radius: 0;
+      box-shadow: none;
+      border-left: none;
+      border-right: none;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      padding: 12px 24px;
+
+      .cc-banner-icon {
+        margin-bottom: 0;
+        flex-shrink: 0;
+
+        svg {
+          width: 24px;
+          height: 24px;
+        }
+      }
+
+      .cc-banner-content {
+        flex: 1;
+        text-align: left;
+
+        .cc-banner-title {
+          display: none;
+        }
+
+        .cc-banner-message {
+          margin: 0;
+          font-size: 14px;
+        }
+
+        .cc-banner-categories {
+          display: none;
+        }
+      }
+
+      .cc-banner-actions {
+        flex-shrink: 0;
+        margin: 0;
+      }
+
+      .cc-close-btn {
+        position: static;
+        order: 99;
+      }
+    }
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // LAYOUT: FLOATING (Corner Card)
+  // ═══════════════════════════════════════════════════════════════
+  &.cc-layout-floating {
+    .cc-banner {
+      max-width: 300px;
+      padding: 20px;
+      text-align: center;
+
+      .cc-banner-icon {
+        margin-bottom: 12px;
+
+        svg {
+          width: 40px;
+          height: 40px;
+        }
+      }
+
+      .cc-banner-content {
+        text-align: center;
+      }
+
+      .cc-banner-title {
+        font-size: 16px;
+        margin-bottom: 8px;
+      }
+
+      .cc-banner-message {
+        font-size: 13px;
+        line-height: 1.5;
+      }
+
+      .cc-banner-categories {
+        display: none;
+      }
+
+      .cc-banner-actions {
+        flex-direction: column;
+        width: 100%;
+        margin-top: 16px;
+
+        .cc-btn {
+          width: 100%;
+        }
+
+        .cc-btn-link {
+          order: 99;
+          font-size: 13px;
+        }
+      }
+    }
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // LAYOUT: DRAWER (Side Panel)
+  // ═══════════════════════════════════════════════════════════════
+  &.cc-layout-drawer {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    width: 360px;
+    max-width: 90vw;
+    z-index: 10001;
+    padding: 0;
+
+    &.cc-drawer-left {
+      left: 0;
+      right: auto;
+    }
+
+    &.cc-drawer-right {
+      right: 0;
+      left: auto;
+    }
+
+    .cc-banner {
+      height: 100%;
+      max-width: 100%;
+      border-radius: 0;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      padding: 24px;
+
+      .cc-banner-icon {
+        margin-bottom: 16px;
+
+        svg {
+          width: 32px;
+          height: 32px;
+        }
+      }
+
+      .cc-banner-content {
+        flex: 1;
+        text-align: left;
+        overflow-y: auto;
+
+        .cc-banner-title {
+          font-size: 20px;
+          margin-bottom: 12px;
+        }
+
+        .cc-banner-message {
+          margin-bottom: 20px;
+        }
+
+        .cc-banner-categories {
+          margin: 20px 0;
+          padding: 16px;
+        }
+      }
+
+      .cc-banner-actions {
+        flex-direction: column;
+        padding-top: 16px;
+        border-top: 1px solid var(--cc-border, #e5e7eb);
+        margin-top: auto;
+        gap: 10px;
+
+        .cc-btn {
+          width: 100%;
+        }
+      }
+
+      .cc-close-btn {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+      }
     }
   }
 
@@ -646,5 +919,44 @@ export default {
   &:hover {
     text-decoration: underline;
   }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// SHAPE VARIATIONS
+// ═══════════════════════════════════════════════════════════════
+.cc-banner-container {
+  // Pill shape (capsule)
+  &.cc-shape-pill {
+    .cc-banner {
+      border-radius: 100px;
+    }
+
+    .cc-btn {
+      border-radius: 100px;
+    }
+  }
+
+  // Square shape (sharp corners)
+  &.cc-shape-square {
+    .cc-banner {
+      border-radius: 0;
+    }
+
+    .cc-btn {
+      border-radius: 0;
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// DRAWER OVERLAY
+// ═══════════════════════════════════════════════════════════════
+.cc-drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 10000;
+  pointer-events: auto;
+  animation: cc-fade-in 0.2s ease-out;
 }
 </style>
