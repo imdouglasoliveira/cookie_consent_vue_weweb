@@ -467,12 +467,15 @@ export default {
   // ═══════════════════════════════════════════════════════════════
   &.cc-layout-banner {
     position: relative !important;
-    width: 100%;
-    padding: 0;
+    width: 100% !important;
+    left: 0 !important;
+    right: 0 !important;
+    padding: 0 !important;
+    transform: none !important;
 
     .cc-banner {
       max-width: 100% !important;
-      width: 100%;
+      width: 100% !important;
       border-radius: 0 !important;
       box-shadow: none !important;
       border-left: none;
