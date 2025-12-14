@@ -451,10 +451,18 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 
   &:hover {
     background: var(--cc-secondary-bg, #f3f4f6);
     color: var(--cc-text, #1f2937);
+  }
+
+  // Bar layout: position inline instead of absolute
+  .cc-layout-bar & {
+    position: static;
+    order: 99;
+    margin-left: 8px;
   }
 }
 
