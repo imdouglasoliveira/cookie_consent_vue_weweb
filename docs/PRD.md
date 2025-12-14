@@ -230,22 +230,29 @@ The component MUST expose these actions to WeWeb workflows:
 #### RF-10: Trigger Events
 **Priority:** Critical
 
-The component MUST emit these events to WeWeb workflows:
+The component MUST emit these events to WeWeb workflows. All events are prefixed with "Cookie:" for easy identification in the workflow editor:
 
-| Event | Payload | When Fired |
-|-------|---------|------------|
-| `consentGiven` | `{ categories, timestamp }` | User accepts any cookies |
-| `consentDeclined` | `{ timestamp }` | User declines all |
-| `preferencesUpdated` | `{ categories, timestamp }` | Preferences saved |
-| `bannerShown` | `{}` | Banner becomes visible |
-| `bannerHidden` | `{ reason }` | Banner is hidden |
-| `preferencesOpened` | `{}` | Preferences modal opens |
-| `preferencesClosed` | `{}` | Preferences modal closes |
+| Event Name | Label (in WeWeb) | Payload | When Fired |
+|------------|------------------|---------|------------|
+| `consentGiven` | Cookie: User Accepted All Cookies | `{ consentId, categories, timestamp }` | User clicks "Accept All" |
+| `consentDeclined` | Cookie: User Declined All Cookies | `{ consentId, timestamp }` | User clicks "Decline" |
+| `preferencesUpdated` | Cookie: User Saved Custom Preferences | `{ consentId, categories, timestamp }` | User saves custom preferences |
+| `bannerShown` | Cookie: Banner Displayed | `{ source? }` | Banner becomes visible |
+| `bannerHidden` | Cookie: Banner Closed | `{ reason }` | Banner is closed |
+| `preferencesOpened` | Cookie: Preferences Modal Opened | `{}` | Preferences modal opens |
+| `preferencesClosed` | Cookie: Preferences Modal Closed | `{}` | Preferences modal closes |
+| `consentStatusRetrieved` | Cookie: Consent Status Retrieved | `{ hasConsent, consent }` | Consent status retrieved via action |
+
+**Naming Convention:**
+- All labels prefixed with "Cookie:" for easy filtering in WeWeb dropdown
+- Labels describe the user action clearly (e.g., "User Accepted All Cookies" vs just "Consent Given")
+- Reason values for `bannerHidden`: `acceptAll`, `declineAll`, `savePreferences`, `manual`, `controller`
 
 **Acceptance Criteria:**
 - [ ] Events fire at correct times
 - [ ] Payloads contain specified data
-- [ ] Events appear in WeWeb workflow editor
+- [ ] Events appear in WeWeb workflow editor with clear "Cookie:" prefix
+- [ ] Labels are descriptive enough to understand without documentation
 
 ### 3.3 Customization
 

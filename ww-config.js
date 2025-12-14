@@ -507,7 +507,7 @@ export default {
   triggerEvents: [
     {
       name: "consentGiven",
-      label: { en: "On Consent Given", pt: "Ao Dar Consentimento" },
+      label: { en: "Cookie: User Accepted All Cookies", pt: "Cookie: Usuario Aceitou Todos os Cookies" },
       event: {
         consentId: "",
         categories: {
@@ -521,7 +521,7 @@ export default {
     },
     {
       name: "consentDeclined",
-      label: { en: "On Consent Declined", pt: "Ao Recusar Consentimento" },
+      label: { en: "Cookie: User Declined All Cookies", pt: "Cookie: Usuario Recusou Todos os Cookies" },
       event: {
         consentId: "",
         timestamp: "",
@@ -529,7 +529,7 @@ export default {
     },
     {
       name: "preferencesUpdated",
-      label: { en: "On Preferences Updated", pt: "Ao Atualizar Preferencias" },
+      label: { en: "Cookie: User Saved Custom Preferences", pt: "Cookie: Usuario Salvou Preferencias Personalizadas" },
       event: {
         consentId: "",
         categories: {
@@ -543,29 +543,29 @@ export default {
     },
     {
       name: "bannerShown",
-      label: { en: "On Banner Shown", pt: "Ao Exibir Banner" },
+      label: { en: "Cookie: Banner Displayed", pt: "Cookie: Banner Exibido" },
       event: {},
     },
     {
       name: "bannerHidden",
-      label: { en: "On Banner Hidden", pt: "Ao Ocultar Banner" },
+      label: { en: "Cookie: Banner Closed", pt: "Cookie: Banner Fechado" },
       event: {
         reason: "",
       },
     },
     {
       name: "preferencesOpened",
-      label: { en: "On Preferences Opened", pt: "Ao Abrir Preferencias" },
+      label: { en: "Cookie: Preferences Modal Opened", pt: "Cookie: Modal de Preferencias Aberto" },
       event: {},
     },
     {
       name: "preferencesClosed",
-      label: { en: "On Preferences Closed", pt: "Ao Fechar Preferencias" },
+      label: { en: "Cookie: Preferences Modal Closed", pt: "Cookie: Modal de Preferencias Fechado" },
       event: {},
     },
     {
       name: "consentStatusRetrieved",
-      label: { en: "On Consent Status Retrieved", pt: "Ao Obter Status do Consentimento" },
+      label: { en: "Cookie: Consent Status Retrieved", pt: "Cookie: Status do Consentimento Obtido" },
       event: {
         hasConsent: false,
         consent: {},

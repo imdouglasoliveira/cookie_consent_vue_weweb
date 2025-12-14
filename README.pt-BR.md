@@ -169,15 +169,18 @@ Retorna o status atual de consentimento para todas as categorias.
 
 ## Eventos de Trigger
 
-| Evento | Payload | Descricao |
-|--------|---------|-----------|
-| `consentGiven` | `{ categories, timestamp }` | Disparado quando usuario da consentimento |
-| `consentDeclined` | `{ timestamp }` | Disparado quando usuario recusa todos |
-| `preferencesUpdated` | `{ categories, timestamp }` | Disparado quando preferencias sao salvas |
-| `bannerShown` | `{}` | Disparado quando banner se torna visivel |
-| `bannerHidden` | `{ reason }` | Disparado quando banner e ocultado |
-| `preferencesOpened` | `{}` | Disparado quando modal de preferencias abre |
-| `preferencesClosed` | `{}` | Disparado quando modal de preferencias fecha |
+Todos os eventos de trigger sao prefixados com "Cookie:" para facil identificacao nos workflows do WeWeb.
+
+| Nome do Evento | Label (no WeWeb) | Payload | Descricao |
+|----------------|------------------|---------|-----------|
+| `consentGiven` | Cookie: Usuario Aceitou Todos os Cookies | `{ consentId, categories, timestamp }` | Usuario clicou em "Aceitar Todos" |
+| `consentDeclined` | Cookie: Usuario Recusou Todos os Cookies | `{ consentId, timestamp }` | Usuario clicou em "Recusar" |
+| `preferencesUpdated` | Cookie: Usuario Salvou Preferencias Personalizadas | `{ consentId, categories, timestamp }` | Usuario salvou preferencias customizadas |
+| `bannerShown` | Cookie: Banner Exibido | `{ source? }` | Banner se tornou visivel |
+| `bannerHidden` | Cookie: Banner Fechado | `{ reason }` | Banner foi fechado (reason: acceptAll, declineAll, savePreferences, manual, controller) |
+| `preferencesOpened` | Cookie: Modal de Preferencias Aberto | `{}` | Modal de preferencias foi aberto |
+| `preferencesClosed` | Cookie: Modal de Preferencias Fechado | `{}` | Modal de preferencias foi fechado |
+| `consentStatusRetrieved` | Cookie: Status do Consentimento Obtido | `{ hasConsent, consent }` | Status de consentimento foi obtido via action |
 
 ### Exemplos de Payload de Eventos
 
