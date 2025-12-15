@@ -433,6 +433,28 @@ export default {
     // ═══════════════════════════════════════════════════════════════
     // EVENT HANDLERS
     // ═══════════════════════════════════════════════════════════════
+    // Helper to ensure IP data has consistent structure
+    getIpDataForEvent() {
+      const emptyIp = {
+        ip: '',
+        city: '',
+        region: '',
+        regionCode: '',
+        country: '',
+        countryCode: '',
+        continent: '',
+        postal: '',
+        latitude: null,
+        longitude: null,
+        timezone: '',
+        utcOffset: '',
+        org: '',
+        asn: '',
+        currency: '',
+      };
+      return this.ipData ? { ...emptyIp, ...this.ipData } : emptyIp;
+    },
+
     handleAcceptAll(fromPreferences = false) {
       const categories = {
         analytics: this.content.analyticsEnabled,
@@ -447,17 +469,20 @@ export default {
       this.showBannerState = false;
       this.showPreferencesState = false;
 
+      // Build event data with consistent structure for WeWeb
+      const eventData = {
+        consentId: consentData.consentId || '',
+        categories: consentData.categories || { essential: true, analytics: false, marketing: false, personalization: false },
+        timestamp: consentData.timestamp || '',
+        browser: consentData.browser || {},
+        page: consentData.page || {},
+        source: consentData.source || {},
+        ip: this.getIpDataForEvent(),
+      };
+
       this.$emit('trigger-event', {
         name: 'consentGiven',
-        event: {
-          consentId: consentData.consentId,
-          categories: consentData.categories,
-          timestamp: consentData.timestamp,
-          browser: consentData.browser,
-          page: consentData.page,
-          source: consentData.source,
-          ip: consentData.ip,
-        },
+        event: eventData,
       });
 
       this.$emit('trigger-event', {
@@ -485,16 +510,19 @@ export default {
       this.showBannerState = false;
       this.showPreferencesState = false;
 
+      // Build event data with consistent structure for WeWeb
+      const eventData = {
+        consentId: consentData.consentId || '',
+        timestamp: consentData.timestamp || '',
+        browser: consentData.browser || {},
+        page: consentData.page || {},
+        source: consentData.source || {},
+        ip: this.getIpDataForEvent(),
+      };
+
       this.$emit('trigger-event', {
         name: 'consentDeclined',
-        event: {
-          consentId: consentData.consentId,
-          timestamp: consentData.timestamp,
-          browser: consentData.browser,
-          page: consentData.page,
-          source: consentData.source,
-          ip: consentData.ip,
-        },
+        event: eventData,
       });
 
       this.$emit('trigger-event', {
@@ -534,17 +562,20 @@ export default {
       this.showPreferencesState = false;
       this.showBannerState = false;
 
+      // Build event data with consistent structure for WeWeb
+      const eventData = {
+        consentId: consentData.consentId || '',
+        categories: consentData.categories || { essential: true, analytics: false, marketing: false, personalization: false },
+        timestamp: consentData.timestamp || '',
+        browser: consentData.browser || {},
+        page: consentData.page || {},
+        source: consentData.source || {},
+        ip: this.getIpDataForEvent(),
+      };
+
       this.$emit('trigger-event', {
         name: 'preferencesUpdated',
-        event: {
-          consentId: consentData.consentId,
-          categories: consentData.categories,
-          timestamp: consentData.timestamp,
-          browser: consentData.browser,
-          page: consentData.page,
-          source: consentData.source,
-          ip: consentData.ip,
-        },
+        event: eventData,
       });
 
       this.$emit('trigger-event', {

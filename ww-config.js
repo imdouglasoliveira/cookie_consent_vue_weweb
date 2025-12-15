@@ -538,32 +538,26 @@ export default {
     {
       label: { en: "Show Banner", pt: "Exibir Banner" },
       action: "showBanner",
-      args: [],
     },
     {
       label: { en: "Hide Banner", pt: "Ocultar Banner" },
       action: "hideBanner",
-      args: [],
     },
     {
       label: { en: "Open Preferences", pt: "Abrir Preferencias" },
       action: "openPreferences",
-      args: [],
     },
     {
       label: { en: "Close Preferences", pt: "Fechar Preferencias" },
       action: "closePreferences",
-      args: [],
     },
     {
       label: { en: "Accept All", pt: "Aceitar Todos" },
       action: "acceptAll",
-      args: [],
     },
     {
       label: { en: "Decline All", pt: "Recusar Todos" },
       action: "declineAll",
-      args: [],
     },
     {
       label: { en: "Save Preferences", pt: "Salvar Preferencias" },
@@ -572,20 +566,17 @@ export default {
         {
           name: "categories",
           type: "object",
-          bindable: true,
-          placeholder: '{"analytics": true, "marketing": false, "personalization": true}',
+          label: { en: "Categories", pt: "Categorias" },
         },
       ],
     },
     {
       label: { en: "Reset Consent", pt: "Resetar Consentimento" },
       action: "resetConsent",
-      args: [],
     },
     {
       label: { en: "Get Consent Status", pt: "Obter Status do Consentimento" },
       action: "getConsentStatus",
-      args: [],
     },
   ],
 
