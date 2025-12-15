@@ -1,5 +1,5 @@
 <template>
-  <div class="cc-host" :class="hostClass" :style="cssVars">
+  <div v-if="shouldRenderComponent" class="cc-host" :class="hostClass" :style="cssVars">
     <!-- Editor Placeholder -->
     <div v-if="showPlaceholder" class="cc-editor-placeholder">
       <svg
@@ -93,6 +93,22 @@ export default {
     };
   },
   computed: {
+    shouldRenderComponent() {
+      // Always show in editor (placeholder visible)
+      if (this.content.showEditorPlaceholder) {
+        return true;
+      }
+      // Show if banner or preferences are active
+      if (this.showBannerState || this.showPreferencesState) {
+        return true;
+      }
+      // Show if manager button should be visible
+      if (this.showManagerState) {
+        return true;
+      }
+      // Hide completely if consent given and no UI needed
+      return false;
+    },
     showPlaceholder() {
       return (
         this.content.showEditorPlaceholder === true &&
