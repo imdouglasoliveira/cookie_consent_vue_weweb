@@ -154,6 +154,18 @@ export default {
     },
 
     // ═══════════════════════════════════════════════════════════════
+    // BINDABLE OUTPUT DATA (for workflows)
+    // ═══════════════════════════════════════════════════════════════
+    lastConsentData: {
+      label: { en: "Last Consent Data", pt: "Ultimos Dados de Consentimento" },
+      type: "Object",
+      defaultValue: null,
+      bindable: true,
+      hidden: true,
+      section: "settings",
+    },
+
+    // ═══════════════════════════════════════════════════════════════
     // BUTTON & UI OPTIONS
     // ═══════════════════════════════════════════════════════════════
     buttonLayout: {
@@ -578,6 +590,10 @@ export default {
       label: { en: "Get Consent Status", pt: "Obter Status do Consentimento" },
       action: "getConsentStatus",
     },
+    {
+      label: { en: "Get Last Consent", pt: "Obter Ultimo Consentimento" },
+      action: "getLastConsent",
+    },
   ],
 
   // ═══════════════════════════════════════════════════════════════
@@ -798,6 +814,24 @@ export default {
       event: {
         hasConsent: false,
         consent: {},
+      },
+    },
+    {
+      name: "lastConsentRetrieved",
+      label: { en: "Cookie: Last Consent Retrieved", pt: "Cookie: Ultimo Consentimento Obtido" },
+      event: {
+        consentId: "",
+        categories: {
+          essential: true,
+          analytics: false,
+          marketing: false,
+          personalization: false,
+        },
+        timestamp: "",
+        browser: {},
+        page: {},
+        source: {},
+        ip: {},
       },
     },
   ],

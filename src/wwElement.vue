@@ -88,6 +88,8 @@ export default {
       bannerDisplayTime: null,
       // IP data (fetched async)
       ipData: null,
+      // Last consent data (for bindable output)
+      lastConsentData: null,
     };
   },
   computed: {
@@ -159,6 +161,8 @@ export default {
     showPolicyLink: true,
     // Data Collection
     collectIpAddress: true,
+    // Bindable output
+    lastConsentData: null,
     // Categories
     analyticsEnabled: true,
     marketingEnabled: true,
@@ -480,6 +484,12 @@ export default {
         ip: this.getIpDataForEvent(),
       };
 
+      // Store internally for later retrieval
+      this.lastConsentData = eventData;
+
+      // Update bindable property for WeWeb bindings
+      this.$emit('update', { lastConsentData: eventData });
+
       this.$emit('trigger-event', {
         name: 'consentGiven',
         event: eventData,
@@ -513,12 +523,19 @@ export default {
       // Build event data with consistent structure for WeWeb
       const eventData = {
         consentId: consentData.consentId || '',
+        categories: consentData.categories || { essential: true, analytics: false, marketing: false, personalization: false },
         timestamp: consentData.timestamp || '',
         browser: consentData.browser || {},
         page: consentData.page || {},
         source: consentData.source || {},
         ip: this.getIpDataForEvent(),
       };
+
+      // Store internally for later retrieval
+      this.lastConsentData = eventData;
+
+      // Update bindable property for WeWeb bindings
+      this.$emit('update', { lastConsentData: eventData });
 
       this.$emit('trigger-event', {
         name: 'consentDeclined',
@@ -572,6 +589,12 @@ export default {
         source: consentData.source || {},
         ip: this.getIpDataForEvent(),
       };
+
+      // Store internally for later retrieval
+      this.lastConsentData = eventData;
+
+      // Update bindable property for WeWeb bindings
+      this.$emit('update', { lastConsentData: eventData });
 
       this.$emit('trigger-event', {
         name: 'preferencesUpdated',
@@ -693,6 +716,28 @@ export default {
         },
       });
       return consent;
+    },
+
+    getLastConsent() {
+      const data = this.lastConsentData || this.getStoredConsent();
+
+      // Build consistent event data
+      const eventData = data ? {
+        consentId: data.consentId || '',
+        categories: data.categories || { essential: true, analytics: false, marketing: false, personalization: false },
+        timestamp: data.timestamp || '',
+        browser: data.browser || {},
+        page: data.page || {},
+        source: data.source || {},
+        ip: data.ip || this.getIpDataForEvent(),
+      } : {};
+
+      this.$emit('trigger-event', {
+        name: 'lastConsentRetrieved',
+        event: eventData,
+      });
+
+      return data;
     },
   },
 };

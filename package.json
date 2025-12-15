@@ -7,7 +7,7 @@
     "build": "weweb build name=cookie-consent type=element"
   },
   "devDependencies": {
-    "@weweb/cli": "^3.8.10"
+    "@weweb/cli": "latest"
   },
   "keywords": [
     "weweb",
