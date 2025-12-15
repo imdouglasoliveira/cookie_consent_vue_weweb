@@ -369,6 +369,195 @@ src/
 3. `wwDefaultContent` MUST include ALL properties
 4. Root element MUST have `min-width` and `min-height`
 
+---
+
+# ADR-002: Acesso a Dados de Consentimento em Workflows
+
+## Status
+**Aceito** | 2024-12-14
+
+## Contexto
+
+Durante a integracao com workflows do WeWeb, identificamos que os dados emitidos via `trigger-event` nao estavam sendo mapeados corretamente para uso em workflows, especialmente dados complexos/aninhados como:
+
+- `categories: { essential, analytics, marketing, personalization }`
+- `browser: { userAgent, language, timezone, ... }`
+- `ip: { ip, city, country, ... }`
+
+### Problema Identificado
+
+Ao emitir eventos com estruturas aninhadas, o WeWeb nao conseguia mapear todos os campos corretamente no editor de workflow, resultando em valores vazios.
+
+## Decisao
+
+### Abordagem Hibrida: localStorage + Trigger Events
+
+Implementamos **tres formas** de acessar dados de consentimento:
+
+#### 1. localStorage (RECOMENDADO)
+
+```javascript
+// No workflow WeWeb (Custom Code ou Formula)
+const consent = JSON.parse(localStorage.getItem('cookieConsent'));
+// Acesso a todos os campos
+consent.consentId
+consent.categories.analytics
+consent.browser.userAgent
+consent.ip.country
+```
+
+**Vantagens:**
+- Estrutura completa sempre disponivel
+- Dados persistem entre sessoes
+- Nao depende do mapeamento de eventos do WeWeb
+- Funciona independente de quando o workflow e executado
+
+#### 2. Propriedade Bindable (`lastConsentData`)
+
+```javascript
+// ww-config.js
+lastConsentData: {
+  type: "Object",
+  defaultValue: null,
+  bindable: true,
+  hidden: true,
+}
+
+// Uso no WeWeb: vincular component.lastConsentData a variavel
+```
+
+**Quando usar:**
+- Precisa de dados reativos no editor
+- Quer evitar Custom Code
+
+#### 3. Action `getLastConsent`
+
+```javascript
+// Chamar via workflow
+component.getLastConsent()
+// Escutar evento lastConsentRetrieved
+```
+
+**Quando usar:**
+- Precisa obter dados em momento especifico
+- Quer usar fluxo de eventos
+
+### Estrutura de Dados Armazenada
+
+```json
+{
+  "version": "1.2",
+  "consentId": "cc_1234567890_abc123xyz",
+  "timestamp": "2024-12-14T10:30:00.000Z",
+  "mode": "opt-in",
+  "action": "acceptAll",
+  "categories": {
+    "essential": true,
+    "analytics": true,
+    "marketing": true,
+    "personalization": true
+  },
+  "expiration": "2025-12-14T10:30:00.000Z",
+  "browser": {
+    "userAgent": "Mozilla/5.0...",
+    "language": "pt-BR",
+    "timezone": "America/Sao_Paulo",
+    "screenSize": "1920x1080",
+    "...": "..."
+  },
+  "page": {
+    "url": "https://example.com/page",
+    "hostname": "example.com",
+    "pathname": "/page",
+    "referrer": "",
+    "title": "Page Title"
+  },
+  "source": {
+    "method": "banner",
+    "style": "standard",
+    "layout": "card",
+    "position": "bottom-left",
+    "buttonClicked": "acceptAll",
+    "interactionTimeMs": 5432
+  },
+  "ip": {
+    "ip": "123.45.67.89",
+    "city": "Sao Paulo",
+    "region": "Sao Paulo",
+    "country": "Brazil",
+    "countryCode": "BR",
+    "latitude": -23.5505,
+    "longitude": -46.6333,
+    "timezone": "America/Sao_Paulo",
+    "...": "..."
+  }
+}
+```
+
+## Alternativas Consideradas
+
+### Alternativa 1: Simplificar Schema de Eventos
+Reduzir estrutura aninhada para campos flat.
+
+**Rejeitado porque:**
+- Perde informacoes ricas (browser, page, ip)
+- Requer mudanca de contrato de dados
+
+### Alternativa 2: Multiplos Eventos Simples
+Emitir eventos separados (consentGiven, categoriesAccepted, locationDetected).
+
+**Rejeitado porque:**
+- Complexidade no workflow (multiplos listeners)
+- Race conditions entre eventos
+- Dificil sincronizar dados
+
+### Alternativa 3: Apenas Binding
+Usar apenas propriedade bindable sem localStorage.
+
+**Rejeitado porque:**
+- Dados perdidos ao recarregar pagina
+- Nao funciona para persistencia
+
+## Consequencias
+
+### Positivas
+- Dados sempre acessiveis via localStorage
+- Multiplas opcoes para diferentes casos de uso
+- Compatibilidade retroativa com trigger-events
+- Estrutura rica de dados preservada
+
+### Negativas
+- Requer Custom Code para localStorage
+- Depende de suporte a localStorage (99.9% dos browsers)
+
+### Riscos
+- Modo privado pode limitar localStorage em alguns browsers
+- Limites de storage (5MB) - nao deve ser problema para consent
+
+## Implementacao
+
+### Arquivos Modificados
+
+| Arquivo | Alteracao |
+|---------|-----------|
+| `ww-config.js` | + `lastConsentData` bindable, + action `getLastConsent`, + evento `lastConsentRetrieved` |
+| `src/wwElement.vue` | + `$emit('update', { lastConsentData })` nos handlers, + metodo `getLastConsent()` |
+
+### Exemplo de Uso no Workflow WeWeb
+
+```javascript
+// No evento "Cookie: User Accepted All Cookies"
+// Usar Custom Code:
+const consent = JSON.parse(localStorage.getItem('cookieConsent'));
+
+// Salvar em variaveis WeWeb
+wwLib.wwVariable.updateValue('consentId', consent.consentId);
+wwLib.wwVariable.updateValue('userCountry', consent.ip?.country || '');
+wwLib.wwVariable.updateValue('analyticsEnabled', consent.categories.analytics);
+```
+
+---
+
 ## References
 
 - [GDPR Cookie Consent Requirements](https://gdpr.eu/cookies/)
