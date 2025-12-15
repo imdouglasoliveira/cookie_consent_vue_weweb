@@ -4,10 +4,10 @@
   "description": "GDPR/LGPD compliant cookie consent component for WeWeb",
   "scripts": {
     "serve": "weweb serve",
-    "build": "weweb build"
+    "build": "weweb build name=cookie-consent type=element"
   },
   "devDependencies": {
-    "@weweb/cli": "latest"
+    "@weweb/cli": "^3.8.10"
   },
   "keywords": [
     "weweb",
