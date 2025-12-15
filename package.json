@@ -1,6 +1,6 @@
 {
   "name": "cookie-consent",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "GDPR/LGPD compliant cookie consent component for WeWeb",
   "scripts": {
     "serve": "weweb serve",
