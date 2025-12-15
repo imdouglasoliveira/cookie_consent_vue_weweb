@@ -242,6 +242,22 @@ O componente DEVE emitir estes eventos para workflows WeWeb. Todos os eventos sa
 | `preferencesOpened` | Cookie: Modal de Preferencias Aberto | `{}` | Modal de preferencias abre |
 | `preferencesClosed` | Cookie: Modal de Preferencias Fechado | `{}` | Modal de preferencias fecha |
 | `consentStatusRetrieved` | Cookie: Status do Consentimento Obtido | `{ hasConsent, consent }` | Status de consentimento obtido via action |
+| `lastConsentRetrieved` | Cookie: Ultimo Consentimento Obtido | `{ consentId, categories, timestamp, ... }` | Dados obtidos via action getLastConsent |
+
+**Acessando Dados de Consentimento no Workflow:**
+
+Os dados completos do consentimento sao armazenados no localStorage e podem ser acessados de 3 formas:
+
+1. **Via localStorage (RECOMENDADO):**
+```javascript
+JSON.parse(localStorage.getItem('cookieConsent'))
+```
+
+2. **Via Binding (propriedade bindable):**
+- Vincular `component.lastConsentData` a uma variavel WeWeb
+
+3. **Via Action:**
+- Chamar action `getLastConsent` e escutar evento `lastConsentRetrieved`
 
 **Convencao de Nomenclatura:**
 - Todos os labels prefixados com "Cookie:" para facil filtragem no dropdown do WeWeb
