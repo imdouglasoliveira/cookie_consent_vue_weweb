@@ -1,20 +1,13 @@
 <template>
   <div
     class="cc-banner-container"
-    :class="[positionClass, layoutClass, shapeClass, drawerSideClass]"
+    :class="[positionClass, layoutClass, shapeClass]"
     :style="containerStyle"
   >
     <!-- Modal Overlay (only for modal layout) -->
     <div
       v-if="content.bannerLayout === 'modal'"
       class="cc-modal-overlay"
-      @click="handleOverlayClick"
-    ></div>
-
-    <!-- Drawer Overlay -->
-    <div
-      v-if="content.bannerLayout === 'drawer' && content.drawerOverlay"
-      class="cc-drawer-overlay"
       @click="handleOverlayClick"
     ></div>
 
@@ -83,7 +76,7 @@
         </p>
 
         <!-- Detailed Style: Show toggles inline -->
-        <div v-if="content.bannerStyle === 'detailed'" class="cc-banner-categories">
+        <div v-if="content.bannerStyle === 'detailed' && content.bannerLayout !== 'expandable'" class="cc-banner-categories">
           <CategoryToggle
             v-if="content.analyticsEnabled"
             :label="content.analyticsLabel"
@@ -110,6 +103,15 @@
             :disabled="false"
             compact
             @change="(val) => $emit('update-preference', 'personalization', val)"
+          />
+        </div>
+
+        <!-- Expandable Layout: Show list with expandable items -->
+        <div v-if="content.bannerLayout === 'expandable'" class="cc-banner-categories">
+          <ExpandableCategory
+            :info-items="expandableInfoItems"
+            :toggle-items="expandableToggleItems"
+            @toggle="handleExpandableToggle"
           />
         </div>
       </div>
@@ -151,11 +153,13 @@
 
 <script>
 import CategoryToggle from './CategoryToggle.vue';
+import ExpandableCategory from './ExpandableCategory.vue';
 
 export default {
   name: 'CookieBanner',
   components: {
     CategoryToggle,
+    ExpandableCategory,
   },
   props: {
     content: { type: Object, required: true },
@@ -185,10 +189,6 @@ export default {
       const shape = this.content.bannerShape || 'rounded';
       return shape !== 'rounded' ? `cc-shape-${shape}` : '';
     },
-    drawerSideClass() {
-      if (this.content.bannerLayout !== 'drawer') return '';
-      return `cc-drawer-${this.content.drawerSide || 'right'}`;
-    },
     containerStyle() {
       return {};
     },
@@ -204,12 +204,62 @@ export default {
         maxWidth: `${width}px`,
       };
     },
+    expandableInfoItems() {
+      const items = [];
+      items.push({
+        key: 'howWeUse',
+        icon: 'settings',
+        label: this.content.expandableHowWeUseLabel || 'How we use cookies',
+        description: this.content.expandableHowWeUseDescription || 'We use cookies to improve your experience on our website.',
+      });
+      items.push({
+        key: 'necessary',
+        icon: 'check',
+        label: this.content.expandableNecessaryLabel || 'We use necessary cookies',
+        description: this.content.expandableNecessaryDescription || 'These cookies are essential for the website to function properly.',
+      });
+      return items;
+    },
+    expandableToggleItems() {
+      const items = [];
+      if (this.content.analyticsEnabled) {
+        items.push({
+          key: 'analytics',
+          icon: 'analytics',
+          label: this.content.expandableAnalyticsLabel || this.content.analyticsLabel || 'Accept analytical cookies',
+          description: this.content.analyticsDescription,
+          checked: this.tempPreferences.analytics,
+        });
+      }
+      if (this.content.marketingEnabled) {
+        items.push({
+          key: 'marketing',
+          icon: 'marketing',
+          label: this.content.expandableMarketingLabel || this.content.marketingLabel || 'Accept marketing cookies',
+          description: this.content.marketingDescription,
+          checked: this.tempPreferences.marketing,
+        });
+      }
+      if (this.content.personalizationEnabled) {
+        items.push({
+          key: 'personalization',
+          icon: 'default',
+          label: this.content.expandablePersonalizationLabel || this.content.personalizationLabel || 'Accept personalization cookies',
+          description: this.content.personalizationDescription,
+          checked: this.tempPreferences.personalization,
+        });
+      }
+      return items;
+    },
   },
   methods: {
     handleOverlayClick() {
       if (this.content.consentMode === 'informational') {
         this.$emit('accept-all');
       }
+    },
+    handleExpandableToggle(key, value) {
+      this.$emit('update-preference', key, value);
     },
   },
 };
@@ -582,81 +632,53 @@ export default {
   }
 
   // ═══════════════════════════════════════════════════════════════
-  // LAYOUT: DRAWER (Side Panel)
+  // LAYOUT: EXPANDABLE (Card with Expandable List - Legal Monster style)
   // ═══════════════════════════════════════════════════════════════
-  &.cc-layout-drawer {
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    width: 360px;
-    max-width: 90vw;
-    z-index: 10001;
-    padding: 0;
-
-    &.cc-drawer-left {
-      left: 0;
-      right: auto;
-    }
-
-    &.cc-drawer-right {
-      right: 0;
-      left: auto;
-    }
-
+  &.cc-layout-expandable {
     .cc-banner {
-      height: 100%;
-      max-width: 100%;
-      border-radius: 0;
-      display: flex;
-      flex-direction: column;
-      overflow-y: auto;
+      max-width: 380px;
       padding: 24px;
 
       .cc-banner-icon {
-        margin-bottom: 16px;
-
-        svg {
-          width: 32px;
-          height: 32px;
-        }
+        display: none;
       }
 
       .cc-banner-content {
-        flex: 1;
         text-align: left;
-        overflow-y: auto;
 
         .cc-banner-title {
-          font-size: 20px;
-          margin-bottom: 12px;
+          font-size: 18px;
+          font-weight: 600;
+          margin-bottom: 8px;
         }
 
         .cc-banner-message {
-          margin-bottom: 20px;
+          font-size: 14px;
+          margin-bottom: 16px;
+          color: var(--cc-text-secondary, #6b7280);
         }
 
         .cc-banner-categories {
-          margin: 20px 0;
-          padding: 16px;
+          margin: 0;
+          padding: 0;
+          background: transparent;
+          border-radius: 8px;
+          border: 1px solid var(--cc-border, #e5e7eb);
+          overflow: hidden;
         }
       }
 
       .cc-banner-actions {
-        flex-direction: column;
-        padding-top: 16px;
-        border-top: 1px solid var(--cc-border, #e5e7eb);
-        margin-top: auto;
-        gap: 10px;
+        margin-top: 16px;
 
         .cc-btn {
           width: 100%;
         }
-      }
 
-      .cc-close-btn {
-        position: absolute;
-        top: 16px;
-        right: 16px;
+        .cc-btn-link,
+        .cc-btn-secondary {
+          display: none;
+        }
       }
     }
   }
@@ -955,15 +977,4 @@ export default {
   }
 }
 
-// ═══════════════════════════════════════════════════════════════
-// DRAWER OVERLAY
-// ═══════════════════════════════════════════════════════════════
-.cc-drawer-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 10000;
-  pointer-events: auto;
-  animation: cc-fade-in 0.2s ease-out;
-}
 </style>
