@@ -23,6 +23,8 @@ npm run build
 |-----------|-----------|
 | [PRD (EN)](docs/PRD.md) | Product Requirements Document |
 | [PRD (PT-BR)](docs/PRD.pt-BR.md) | Documento de Requisitos do Produto |
+| [PRD-2 (EN)](docs/PRD-2.md) | PRD Atualizacoes: Consent Mode v2, UUID, Cross-subdomain |
+| [PRD-2 (PT-BR)](docs/PRD-2.pt-BR.md) | PRD Atualizacoes: Consent Mode v2, UUID, Cross-subdomain |
 | [ADR](docs/ADR.md) | Registro de Decisoes de Arquitetura |
 | [Guia WeWeb](AI_docs/weweb-integration.md) | Guia de integracao com WeWeb |
 
