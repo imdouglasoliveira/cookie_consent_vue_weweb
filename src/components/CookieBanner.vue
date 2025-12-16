@@ -657,8 +657,11 @@ export default {
   // ═══════════════════════════════════════════════════════════════
   &.cc-layout-expandable {
     .cc-banner {
-      max-width: 380px;
+      max-width: 420px;
       padding: 24px;
+      // Forçar layout vertical sempre (override minimal style)
+      flex-direction: column !important;
+      align-items: stretch !important;
 
       .cc-banner-icon {
         display: none;
@@ -666,34 +669,40 @@ export default {
 
       .cc-banner-content {
         text-align: left;
+        flex: none !important;
 
         .cc-banner-title {
           font-size: 18px;
           font-weight: 600;
           margin-bottom: 8px;
+          color: var(--cc-text, #1f2937);
         }
 
         .cc-banner-message {
           font-size: 14px;
           margin-bottom: 16px;
           color: var(--cc-text-secondary, #6b7280);
+          line-height: 1.5;
         }
 
         .cc-banner-categories {
           margin: 0;
           padding: 0;
           background: transparent;
-          border-radius: 8px;
+          border-radius: 10px;
           border: 1px solid var(--cc-border, #e5e7eb);
           overflow: hidden;
         }
       }
 
       .cc-banner-actions {
-        margin-top: 16px;
+        margin-top: 20px;
+        flex-direction: column !important;
 
         .cc-btn {
           width: 100%;
+          padding: 12px 20px;
+          font-size: 15px;
         }
 
         .cc-btn-link,
