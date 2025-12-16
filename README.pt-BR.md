@@ -39,6 +39,14 @@ npm run build
 - [x] Armazenamento de cookies com expiracao configuravel
 - [x] Bloqueio de scripts ate consentimento ser dado
 
+### Funcionalidades PRD-2 (v2.0)
+- [x] **Google Consent Mode v2**: Default denied no carregamento + update no consentimento
+- [x] **Integracao Meta Pixel**: Chamadas automaticas `fbq('consent', 'grant/revoke')`
+- [x] **Sincronizacao cross-subdomain**: Compartilhamento de consentimento via cookie entre subdominios
+- [x] **UUIDs para consentId**: Usa `crypto.randomUUID()` com fallback
+- [x] **Nova action `setConsent()`**: Controle programatico de consentimento
+- [x] **Novos eventos**: `consentDefaulted`, `consentChanged`
+
 ### Modos de Consentimento
 - [x] **Opt-in** (padrao LGPD/GDPR): Todos os cookies nao-essenciais bloqueados ate consentimento explicito
 - [x] **Opt-out**: Cookies habilitados por padrao, usuario pode recusar
@@ -109,6 +117,18 @@ cookies_vue/
 | `marketingEnabled` | OnOff | `true` | Habilitar categoria marketing |
 | `personalizationEnabled` | OnOff | `true` | Habilitar categoria personalizacao |
 
+### Configuracoes PRD-2 (v2.0)
+
+| Propriedade | Tipo | Padrao | Descricao |
+|-------------|------|--------|-----------|
+| `googleConsentModeEnabled` | OnOff | `false` | Habilitar Google Consent Mode v2 |
+| `googleConsentDefaultDenied` | OnOff | `true` | Disparar default denied no carregamento da pagina |
+| `googleConsentMapMarketing` | OnOff | `true` | Mapear categoria marketing para sinais de ads |
+| `metaPixelEnabled` | OnOff | `false` | Habilitar notificacoes de consentimento do Meta Pixel |
+| `storageCookieEnabled` | OnOff | `true` | Habilitar armazenamento em cookie para cross-subdomain |
+| `storageCookieDomain` | Text | `""` | Dominio do cookie (ex.: `.meudominio.com`) |
+| `emitDefaultStateEvent` | OnOff | `false` | Emitir evento consentDefaulted no carregamento |
+
 ### Estilizacao
 
 | Propriedade | Tipo | Padrao | Descricao |
@@ -169,6 +189,17 @@ Limpa o consentimento armazenado e exibe o banner novamente.
 ### `getConsentStatus()`
 Retorna o status atual de consentimento para todas as categorias.
 
+### `setConsent(categories, options)` (PRD-2)
+Define consentimento programaticamente com controle total. Emite evento `consentChanged`.
+
+```javascript
+// Exemplo de uso
+Component.setConsent(
+  { analytics: true, marketing: false, personalization: true },
+  { source: 'custom-ui' }
+)
+```
+
 ## Eventos de Trigger
 
 Todos os eventos de trigger sao prefixados com "Cookie:" para facil identificacao nos workflows do WeWeb.
@@ -183,6 +214,8 @@ Todos os eventos de trigger sao prefixados com "Cookie:" para facil identificaca
 | `preferencesOpened` | Cookie: Modal de Preferencias Aberto | `{}` | Modal de preferencias foi aberto |
 | `preferencesClosed` | Cookie: Modal de Preferencias Fechado | `{}` | Modal de preferencias foi fechado |
 | `consentStatusRetrieved` | Cookie: Status do Consentimento Obtido | `{ hasConsent, consent }` | Status de consentimento foi obtido via action |
+| `consentDefaulted` | Cookie: Consentimento Padronizado | `{ hasConsent, effectiveConsent, timestamp }` | **(PRD-2)** Estado inicial negado aplicado |
+| `consentChanged` | Cookie: Consentimento Alterado | `{ consentId, categories, previousCategories, timestamp, source }` | **(PRD-2)** Qualquer mudanca de consentimento ocorreu |
 
 ### Exemplos de Payload de Eventos
 

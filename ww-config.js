@@ -154,6 +154,68 @@ export default {
     },
 
     // ═══════════════════════════════════════════════════════════════
+    // GOOGLE CONSENT MODE V2
+    // ═══════════════════════════════════════════════════════════════
+    googleConsentModeEnabled: {
+      label: { en: "Enable Google Consent Mode v2", pt: "Habilitar Google Consent Mode v2" },
+      type: "OnOff",
+      defaultValue: false,
+      section: "settings",
+    },
+    googleConsentDefaultDenied: {
+      label: { en: "Default Denied on Load", pt: "Default Negado ao Carregar" },
+      type: "OnOff",
+      defaultValue: true,
+      section: "settings",
+      hidden: (content) => !content.googleConsentModeEnabled,
+    },
+    googleConsentMapMarketing: {
+      label: { en: "Map Marketing to Ad Signals", pt: "Mapear Marketing para Sinais de Ads" },
+      type: "OnOff",
+      defaultValue: true,
+      section: "settings",
+      hidden: (content) => !content.googleConsentModeEnabled,
+    },
+
+    // ═══════════════════════════════════════════════════════════════
+    // META PIXEL INTEGRATION
+    // ═══════════════════════════════════════════════════════════════
+    metaPixelEnabled: {
+      label: { en: "Enable Meta Pixel Consent", pt: "Habilitar Consentimento Meta Pixel" },
+      type: "OnOff",
+      defaultValue: false,
+      section: "settings",
+    },
+
+    // ═══════════════════════════════════════════════════════════════
+    // CROSS-SUBDOMAIN STORAGE
+    // ═══════════════════════════════════════════════════════════════
+    storageCookieEnabled: {
+      label: { en: "Enable Cookie Storage", pt: "Habilitar Armazenamento em Cookie" },
+      type: "OnOff",
+      defaultValue: true,
+      section: "settings",
+    },
+    storageCookieDomain: {
+      label: { en: "Cookie Domain (for subdomains)", pt: "Dominio do Cookie (para subdominios)" },
+      type: "Text",
+      defaultValue: "",
+      section: "settings",
+      hidden: (content) => !content.storageCookieEnabled,
+      bindable: true,
+    },
+
+    // ═══════════════════════════════════════════════════════════════
+    // EVENTS OPTIONS
+    // ═══════════════════════════════════════════════════════════════
+    emitDefaultStateEvent: {
+      label: { en: "Emit Consent Defaulted Event", pt: "Emitir Evento Consent Defaulted" },
+      type: "OnOff",
+      defaultValue: false,
+      section: "settings",
+    },
+
+    // ═══════════════════════════════════════════════════════════════
     // BINDABLE OUTPUT DATA (for workflows)
     // ═══════════════════════════════════════════════════════════════
     lastConsentData: {
@@ -594,6 +656,22 @@ export default {
       label: { en: "Get Last Consent", pt: "Obter Ultimo Consentimento" },
       action: "getLastConsent",
     },
+    {
+      label: { en: "Set Consent", pt: "Definir Consentimento" },
+      action: "setConsent",
+      args: [
+        {
+          name: "categories",
+          type: "object",
+          label: { en: "Categories", pt: "Categorias" },
+        },
+        {
+          name: "options",
+          type: "object",
+          label: { en: "Options (source)", pt: "Opcoes (source)" },
+        },
+      ],
+    },
   ],
 
   // ═══════════════════════════════════════════════════════════════
@@ -832,6 +910,41 @@ export default {
         page: {},
         source: {},
         ip: {},
+      },
+    },
+    {
+      name: "consentDefaulted",
+      label: { en: "Cookie: Consent Defaulted", pt: "Cookie: Consentimento Padrao Aplicado" },
+      event: {
+        hasConsent: false,
+        effectiveConsent: {
+          analytics_storage: "denied",
+          ad_storage: "denied",
+          ad_user_data: "denied",
+          ad_personalization: "denied",
+        },
+        timestamp: "",
+      },
+    },
+    {
+      name: "consentChanged",
+      label: { en: "Cookie: Consent Changed", pt: "Cookie: Consentimento Alterado" },
+      event: {
+        consentId: "",
+        categories: {
+          essential: true,
+          analytics: false,
+          marketing: false,
+          personalization: false,
+        },
+        previousCategories: {
+          essential: true,
+          analytics: false,
+          marketing: false,
+          personalization: false,
+        },
+        timestamp: "",
+        source: "",
       },
     },
   ],

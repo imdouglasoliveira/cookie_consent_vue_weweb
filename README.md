@@ -39,6 +39,14 @@ npm run build
 - [x] Cookie storage with configurable expiration
 - [x] Script blocking until consent is granted
 
+### PRD-2 Features (v2.0)
+- [x] **Google Consent Mode v2**: Default denied on load + update on consent
+- [x] **Meta Pixel Integration**: Automatic `fbq('consent', 'grant/revoke')` calls
+- [x] **Cross-subdomain sync**: Cookie-based consent sharing between subdomains
+- [x] **UUID consent IDs**: Uses `crypto.randomUUID()` with fallback
+- [x] **New `setConsent()` action**: Programmatic consent control
+- [x] **New events**: `consentDefaulted`, `consentChanged`
+
 ### Consent Modes
 - [x] **Opt-in** (GDPR default): All non-essential cookies blocked until explicit consent
 - [x] **Opt-out**: Cookies enabled by default, user can refuse
@@ -108,6 +116,18 @@ cookies_vue/
 | `marketingEnabled` | OnOff | `true` | Enable marketing category |
 | `personalizationEnabled` | OnOff | `true` | Enable personalization category |
 
+### PRD-2 Settings (v2.0)
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `googleConsentModeEnabled` | OnOff | `false` | Enable Google Consent Mode v2 |
+| `googleConsentDefaultDenied` | OnOff | `true` | Fire default denied on page load |
+| `googleConsentMapMarketing` | OnOff | `true` | Map marketing category to ad signals |
+| `metaPixelEnabled` | OnOff | `false` | Enable Meta Pixel consent notifications |
+| `storageCookieEnabled` | OnOff | `true` | Enable cookie storage for cross-subdomain |
+| `storageCookieDomain` | Text | `""` | Cookie domain (e.g., `.mydomain.com`) |
+| `emitDefaultStateEvent` | OnOff | `false` | Emit consentDefaulted event on load |
+
 ### Styling
 
 | Property | Type | Default | Description |
@@ -168,6 +188,17 @@ Clears stored consent and shows banner again.
 ### `getConsentStatus()`
 Returns current consent status for all categories.
 
+### `setConsent(categories, options)` (PRD-2)
+Programmatically sets consent with full control. Emits `consentChanged` event.
+
+```javascript
+// Example usage
+Component.setConsent(
+  { analytics: true, marketing: false, personalization: true },
+  { source: 'custom-ui' }
+)
+```
+
 ## Trigger Events
 
 All trigger events are prefixed with "Cookie:" for easy identification in WeWeb workflows.
@@ -182,6 +213,8 @@ All trigger events are prefixed with "Cookie:" for easy identification in WeWeb 
 | `preferencesOpened` | Cookie: Preferences Modal Opened | `{}` | Preferences modal opened |
 | `preferencesClosed` | Cookie: Preferences Modal Closed | `{}` | Preferences modal closed |
 | `consentStatusRetrieved` | Cookie: Consent Status Retrieved | `{ hasConsent, consent }` | Consent status was retrieved via action |
+| `consentDefaulted` | Cookie: Consent Defaulted | `{ hasConsent, effectiveConsent, timestamp }` | **(PRD-2)** Initial denied state applied |
+| `consentChanged` | Cookie: Consent Changed | `{ consentId, categories, previousCategories, timestamp, source }` | **(PRD-2)** Any consent change occurred |
 
 ### Event Payload Examples
 

@@ -177,6 +177,17 @@ export default {
     showPolicyLink: true,
     // Data Collection
     collectIpAddress: true,
+    // Google Consent Mode v2 (PRD-2)
+    googleConsentModeEnabled: false,
+    googleConsentDefaultDenied: true,
+    googleConsentMapMarketing: true,
+    // Meta Pixel (PRD-2)
+    metaPixelEnabled: false,
+    // Cross-subdomain storage (PRD-2)
+    storageCookieEnabled: true,
+    storageCookieDomain: '',
+    // Events options (PRD-2)
+    emitDefaultStateEvent: false,
     // Bindable output
     lastConsentData: null,
     // Categories
@@ -354,8 +365,24 @@ export default {
     // ═══════════════════════════════════════════════════════════════
     // STORAGE METHODS
     // ═══════════════════════════════════════════════════════════════
+    // ═══════════════════════════════════════════════════════════════
+    // UUID GENERATION (PRD-2 Epic E)
+    // ═══════════════════════════════════════════════════════════════
+    generateUUID() {
+      // Use crypto.randomUUID when available (modern browsers)
+      if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+        return crypto.randomUUID();
+      }
+      // Fallback for older browsers
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+        const r = Math.random() * 16 | 0;
+        const v = c === 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+      });
+    },
+
     generateConsentId() {
-      return `cc_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      return `cc_${this.generateUUID()}`;
     },
 
     getStoredConsent() {
@@ -409,11 +436,110 @@ export default {
         console.warn('Failed to save consent to localStorage:', e);
       }
 
-      // Set fallback cookie
-      const maxAge = (this.content.cookieExpiration || 365) * 24 * 60 * 60;
-      document.cookie = `${COOKIE_NAME}=1; max-age=${maxAge}; path=/; SameSite=Lax`;
+      // Set cookie with consent data (PRD-2 Epic D)
+      if (this.content.storageCookieEnabled !== false) {
+        this.setConsentCookie(consentData);
+      }
 
       return consentData;
+    },
+
+    // ═══════════════════════════════════════════════════════════════
+    // CROSS-SUBDOMAIN COOKIE (PRD-2 Epic D)
+    // ═══════════════════════════════════════════════════════════════
+    setConsentCookie(consentData) {
+      const maxAge = (this.content.cookieExpiration || 365) * 24 * 60 * 60;
+
+      // Store minimal consent data in cookie for cross-subdomain sync
+      const cookieValue = JSON.stringify({
+        v: consentData.version,
+        c: consentData.categories,
+        t: consentData.timestamp,
+        id: consentData.consentId,
+      });
+
+      // Build cookie string
+      let cookieStr = `${COOKIE_NAME}=${encodeURIComponent(cookieValue)}; max-age=${maxAge}; path=/; SameSite=Lax`;
+
+      // Add domain if configured (for cross-subdomain)
+      const domain = this.content.storageCookieDomain;
+      if (domain && domain.trim()) {
+        cookieStr += `; domain=${domain.trim()}`;
+      }
+
+      // Add Secure flag if on HTTPS
+      if (window.location.protocol === 'https:') {
+        cookieStr += '; Secure';
+      }
+
+      document.cookie = cookieStr;
+    },
+
+    getConsentCookie() {
+      try {
+        const cookies = document.cookie.split(';');
+        for (const cookie of cookies) {
+          const [name, value] = cookie.trim().split('=');
+          if (name === COOKIE_NAME && value) {
+            const decoded = decodeURIComponent(value);
+            // Check if it's JSON (new format) or just "1" (old format)
+            if (decoded === '1') {
+              // Legacy cookie - return null to show banner
+              return { legacy: true };
+            }
+            return JSON.parse(decoded);
+          }
+        }
+      } catch (e) {
+        console.warn('Failed to read consent cookie:', e);
+      }
+      return null;
+    },
+
+    hydrateFromCookie() {
+      const cookieData = this.getConsentCookie();
+
+      if (!cookieData) return null;
+
+      // Handle legacy cookie format
+      if (cookieData.legacy) {
+        // Old format - consent exists but no categories
+        // Return null to show banner for re-consent
+        return null;
+      }
+
+      // Hydrate localStorage from cookie data
+      const now = new Date();
+      const expiration = new Date(now);
+      expiration.setDate(expiration.getDate() + (this.content.cookieExpiration || 365));
+
+      const hydratedConsent = {
+        version: cookieData.v || '1.2',
+        consentId: cookieData.id || this.generateConsentId(),
+        timestamp: cookieData.t || now.toISOString(),
+        mode: this.content.consentMode,
+        action: 'hydrated',
+        categories: cookieData.c || {
+          essential: true,
+          analytics: false,
+          marketing: false,
+          personalization: false,
+        },
+        expiration: expiration.toISOString(),
+        browser: this.collectBrowserData(),
+        page: this.collectPageContext(),
+        source: { method: 'cookie-hydration' },
+        ip: this.ipData,
+      };
+
+      // Save to localStorage
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(hydratedConsent));
+      } catch (e) {
+        console.warn('Failed to hydrate localStorage from cookie:', e);
+      }
+
+      return hydratedConsent;
     },
 
     clearConsent() {
@@ -422,14 +548,118 @@ export default {
       } catch (e) {
         console.warn('Failed to clear consent from localStorage:', e);
       }
-      document.cookie = `${COOKIE_NAME}=; max-age=0; path=/`;
+
+      // Clear cookie with domain if configured
+      let cookieStr = `${COOKIE_NAME}=; max-age=0; path=/`;
+      const domain = this.content.storageCookieDomain;
+      if (domain && domain.trim()) {
+        cookieStr += `; domain=${domain.trim()}`;
+      }
+      document.cookie = cookieStr;
+    },
+
+    // ═══════════════════════════════════════════════════════════════
+    // GOOGLE CONSENT MODE V2 (PRD-2 Epic B)
+    // ═══════════════════════════════════════════════════════════════
+    initGoogleConsentDefault() {
+      if (!this.content.googleConsentModeEnabled) return;
+      if (!this.content.googleConsentDefaultDenied) return;
+
+      // Check if gtag exists
+      if (typeof window.gtag !== 'function') {
+        // Create gtag function if it doesn't exist (for dataLayer)
+        window.dataLayer = window.dataLayer || [];
+        window.gtag = function() {
+          window.dataLayer.push(arguments);
+        };
+      }
+
+      // Set default denied state for all signals
+      window.gtag('consent', 'default', {
+        analytics_storage: 'denied',
+        ad_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied',
+        wait_for_update: 500, // Wait 500ms for consent update
+      });
+    },
+
+    updateGoogleConsentMode(categories) {
+      if (!this.content.googleConsentModeEnabled) return;
+
+      // Check if gtag exists
+      if (typeof window.gtag !== 'function') return;
+
+      const consentUpdate = {
+        analytics_storage: categories.analytics ? 'granted' : 'denied',
+      };
+
+      // Map marketing category to ad signals if enabled
+      if (this.content.googleConsentMapMarketing !== false) {
+        const marketingStatus = categories.marketing ? 'granted' : 'denied';
+        consentUpdate.ad_storage = marketingStatus;
+        consentUpdate.ad_user_data = marketingStatus;
+        consentUpdate.ad_personalization = marketingStatus;
+      }
+
+      window.gtag('consent', 'update', consentUpdate);
+    },
+
+    // ═══════════════════════════════════════════════════════════════
+    // META PIXEL CONSENT (PRD-2 Epic C)
+    // ═══════════════════════════════════════════════════════════════
+    updateMetaPixelConsent(categories) {
+      if (!this.content.metaPixelEnabled) return;
+
+      // Safe check for fbq existence
+      if (typeof window.fbq !== 'function') return;
+
+      try {
+        if (categories.marketing) {
+          window.fbq('consent', 'grant');
+        } else {
+          window.fbq('consent', 'revoke');
+        }
+      } catch (e) {
+        console.warn('Failed to update Meta Pixel consent:', e);
+      }
+    },
+
+    // ═══════════════════════════════════════════════════════════════
+    // CONSENT DEFAULTED EVENT (PRD-2 Epic A)
+    // ═══════════════════════════════════════════════════════════════
+    emitConsentDefaulted() {
+      if (!this.content.emitDefaultStateEvent) return;
+
+      this.$emit('trigger-event', {
+        name: 'consentDefaulted',
+        event: {
+          hasConsent: false,
+          effectiveConsent: {
+            analytics_storage: 'denied',
+            ad_storage: 'denied',
+            ad_user_data: 'denied',
+            ad_personalization: 'denied',
+          },
+          timestamp: new Date().toISOString(),
+        },
+      });
     },
 
     // ═══════════════════════════════════════════════════════════════
     // INITIALIZATION
     // ═══════════════════════════════════════════════════════════════
     checkExistingConsent() {
-      const consent = this.getStoredConsent();
+      // Initialize Google Consent Mode default (must be early)
+      this.initGoogleConsentDefault();
+
+      // Try to get consent from localStorage first
+      let consent = this.getStoredConsent();
+
+      // If no localStorage, try to hydrate from cookie (cross-subdomain)
+      if (!consent && this.content.storageCookieEnabled !== false) {
+        consent = this.hydrateFromCookie();
+      }
 
       if (consent) {
         this.consentGiven = true;
@@ -439,8 +669,18 @@ export default {
           personalization: consent.categories?.personalization || false,
         };
         this.showBannerState = false;
+
+        // Apply consent to Google Consent Mode and Meta Pixel
+        this.updateGoogleConsentMode(consent.categories);
+        this.updateMetaPixelConsent(consent.categories);
+
+        // Enable scripts for granted categories
+        this.enableScripts(consent.categories);
       } else {
         this.consentGiven = false;
+        // Emit consent defaulted event
+        this.emitConsentDefaulted();
+
         // Show banner based on consent mode
         if (this.content.consentMode !== 'informational') {
           this.showBannerState = true;
@@ -519,6 +759,10 @@ export default {
       // Reset interaction time
       this.bannerDisplayTime = null;
 
+      // Update Google Consent Mode and Meta Pixel
+      this.updateGoogleConsentMode(categories);
+      this.updateMetaPixelConsent(categories);
+
       this.enableScripts(categories);
     },
 
@@ -565,6 +809,10 @@ export default {
 
       // Reset interaction time
       this.bannerDisplayTime = null;
+
+      // Update Google Consent Mode and Meta Pixel
+      this.updateGoogleConsentMode(categories);
+      this.updateMetaPixelConsent(categories);
     },
 
     handleOpenPreferences() {
@@ -624,6 +872,10 @@ export default {
 
       // Reset interaction time
       this.bannerDisplayTime = null;
+
+      // Update Google Consent Mode and Meta Pixel
+      this.updateGoogleConsentMode(this.tempPreferences);
+      this.updateMetaPixelConsent(this.tempPreferences);
 
       this.enableScripts(this.tempPreferences);
     },
@@ -754,6 +1006,90 @@ export default {
       });
 
       return data;
+    },
+
+    // ═══════════════════════════════════════════════════════════════
+    // NEW ACTION: setConsent (PRD-2 Epic F)
+    // ═══════════════════════════════════════════════════════════════
+    setConsent(categories, options = {}) {
+      // Get previous categories for consentChanged event
+      const previousConsent = this.getStoredConsent();
+      const previousCategories = previousConsent?.categories || {
+        essential: true,
+        analytics: false,
+        marketing: false,
+        personalization: false,
+      };
+
+      // Normalize categories
+      const normalizedCategories = {
+        analytics: categories?.analytics || false,
+        marketing: categories?.marketing || false,
+        personalization: categories?.personalization || false,
+      };
+
+      // Save consent
+      const sourceMethod = options?.source || 'setConsent';
+      const consentData = this.saveConsent(normalizedCategories, 'setConsent', sourceMethod);
+
+      this.consentGiven = true;
+      this.tempPreferences = { ...normalizedCategories };
+      this.showBannerState = false;
+      this.showPreferencesState = false;
+
+      // Build event data
+      const eventData = {
+        consentId: consentData.consentId || '',
+        categories: consentData.categories || { essential: true, analytics: false, marketing: false, personalization: false },
+        timestamp: consentData.timestamp || '',
+        browser: consentData.browser || {},
+        page: consentData.page || {},
+        source: consentData.source || {},
+        ip: this.getIpDataForEvent(),
+      };
+
+      // Store internally
+      this.lastConsentData = eventData;
+
+      // Update bindable property
+      this.$emit('update', { lastConsentData: eventData });
+
+      // Emit consentChanged event (new in PRD-2)
+      this.$emit('trigger-event', {
+        name: 'consentChanged',
+        event: {
+          consentId: consentData.consentId,
+          categories: consentData.categories,
+          previousCategories,
+          timestamp: consentData.timestamp,
+          source: sourceMethod,
+        },
+      });
+
+      // Emit appropriate consent event based on categories
+      const allAccepted = normalizedCategories.analytics &&
+        normalizedCategories.marketing &&
+        normalizedCategories.personalization;
+      const allDeclined = !normalizedCategories.analytics &&
+        !normalizedCategories.marketing &&
+        !normalizedCategories.personalization;
+
+      if (allAccepted) {
+        this.$emit('trigger-event', { name: 'consentGiven', event: eventData });
+      } else if (allDeclined) {
+        this.$emit('trigger-event', { name: 'consentDeclined', event: eventData });
+      } else {
+        this.$emit('trigger-event', { name: 'preferencesUpdated', event: eventData });
+      }
+
+      // Update Google Consent Mode and Meta Pixel
+      this.updateGoogleConsentMode(normalizedCategories);
+      this.updateMetaPixelConsent(normalizedCategories);
+
+      // Enable scripts
+      this.enableScripts(normalizedCategories);
+
+      return consentData;
     },
   },
 };
