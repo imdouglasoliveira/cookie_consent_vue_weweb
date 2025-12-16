@@ -687,7 +687,7 @@ export default {
   // MOBILE RESPONSIVE
   // ═══════════════════════════════════════════════════════════════
   @media (max-width: 768px) {
-    &:not(.cc-layout-bar):not(.cc-layout-modal) {
+    &:not(.cc-layout-bar):not(.cc-layout-modal):not(.cc-layout-banner) {
       left: 0 !important;
       right: 0 !important;
       transform: none !important;
@@ -701,6 +701,173 @@ export default {
 
       .cc-banner-content {
         text-align: center;
+      }
+    }
+
+    // Banner inline: stack vertical no mobile
+    &.cc-layout-banner {
+      .cc-banner {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 16px;
+        padding: 16px 20px;
+        text-align: center;
+
+        .cc-banner-icon {
+          justify-content: center;
+        }
+
+        .cc-banner-content {
+          text-align: center !important;
+
+          .cc-banner-message {
+            display: block;
+          }
+        }
+
+        .cc-banner-actions {
+          flex-direction: column !important;
+          width: 100%;
+
+          .cc-btn {
+            width: 100%;
+          }
+
+          .cc-btn-link {
+            order: 99;
+          }
+        }
+
+        .cc-close-btn {
+          position: absolute;
+          top: 8px;
+          right: 8px;
+          order: initial;
+        }
+      }
+    }
+
+    // Floating (Corner): full width no mobile, sem ícone ao lado
+    &.cc-layout-floating {
+      bottom: 0 !important;
+      padding: 0 !important;
+
+      .cc-banner {
+        max-width: 100% !important;
+        width: 100%;
+        border-radius: 16px 16px 0 0;
+        padding: 20px;
+
+        .cc-banner-icon {
+          margin-bottom: 12px;
+
+          svg {
+            width: 32px;
+            height: 32px;
+          }
+        }
+
+        .cc-banner-content {
+          text-align: center;
+
+          .cc-banner-message {
+            font-size: 14px;
+            line-height: 1.6;
+          }
+        }
+
+        .cc-banner-actions {
+          margin-top: 16px;
+          gap: 10px;
+        }
+      }
+    }
+
+    // Toast (Snackbar): stack vertical no mobile
+    &.cc-layout-toast {
+      bottom: 0 !important;
+      padding: 0 !important;
+
+      .cc-banner {
+        max-width: 100% !important;
+        width: 100%;
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 12px;
+        padding: 16px 20px;
+        border-radius: 16px 16px 0 0;
+        text-align: center;
+
+        .cc-banner-icon {
+          justify-content: center;
+          margin: 0;
+
+          svg {
+            width: 28px;
+            height: 28px;
+          }
+        }
+
+        .cc-banner-content {
+          text-align: center;
+
+          .cc-banner-message {
+            white-space: normal;
+            font-size: 14px;
+            line-height: 1.5;
+          }
+        }
+
+        .cc-banner-actions {
+          flex-direction: column !important;
+          width: 100%;
+          gap: 10px;
+
+          .cc-btn {
+            width: 100%;
+            padding: 12px 20px;
+          }
+        }
+
+        .cc-close-btn {
+          position: absolute;
+          top: 8px;
+          right: 8px;
+          order: initial;
+        }
+      }
+    }
+
+    // Expandable List: ajustes mobile
+    &.cc-layout-expandable {
+      bottom: 0 !important;
+      padding: 0 !important;
+
+      .cc-banner {
+        max-width: 100% !important;
+        width: 100%;
+        border-radius: 16px 16px 0 0;
+        padding: 20px;
+        max-height: 85vh;
+        overflow-y: auto;
+
+        .cc-banner-content {
+          .cc-banner-title {
+            font-size: 16px;
+          }
+
+          .cc-banner-message {
+            font-size: 13px;
+          }
+        }
+
+        .cc-banner-actions {
+          margin-top: 16px;
+          position: sticky;
+          bottom: 0;
+          background: var(--cc-bg, #ffffff);
+          padding-top: 12px;
+        }
       }
     }
   }
