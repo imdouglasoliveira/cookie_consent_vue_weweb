@@ -974,11 +974,21 @@ export default {
 
   @media (max-width: 768px) {
     max-width: 100%;
+    // Bottom sheet layouts: topo arredondado, fundo reto (default para mobile)
     border-radius: var(--cc-radius, 12px) var(--cc-radius, 12px) 0 0;
 
     &.cc-style-minimal {
       flex-direction: column;
       align-items: stretch;
+    }
+  }
+
+  // Layouts que flutuam no mobile: manter border-radius uniforme
+  .cc-layout-modal &,
+  .cc-layout-card &,
+  .cc-layout-popup & {
+    @media (max-width: 768px) {
+      border-radius: var(--cc-radius, 12px);
     }
   }
 }
