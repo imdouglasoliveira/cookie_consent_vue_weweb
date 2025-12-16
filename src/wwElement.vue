@@ -185,6 +185,7 @@ export default {
     metaPixelEnabled: false,
     // Cross-subdomain storage (PRD-2)
     storageCookieEnabled: true,
+    storageCookieDomainAuto: true,
     storageCookieDomain: '',
     // Events options (PRD-2)
     emitDefaultStateEvent: false,
@@ -447,6 +448,25 @@ export default {
     // ═══════════════════════════════════════════════════════════════
     // CROSS-SUBDOMAIN COOKIE (PRD-2 Epic D)
     // ═══════════════════════════════════════════════════════════════
+    getEffectiveCookieDomain() {
+      // If auto-detect is ON, extract base domain from hostname
+      if (this.content.storageCookieDomainAuto !== false) {
+        const hostname = window.location.hostname;
+        // Skip localhost and IP addresses
+        if (hostname === 'localhost' || /^\d+\.\d+\.\d+\.\d+$/.test(hostname)) {
+          return '';
+        }
+        const parts = hostname.split('.');
+        if (parts.length >= 2) {
+          // Return base domain with leading dot (e.g., .example.com)
+          return '.' + parts.slice(-2).join('.');
+        }
+        return '';
+      }
+      // If auto OFF, use manual value
+      return this.content.storageCookieDomain || '';
+    },
+
     setConsentCookie(consentData) {
       const maxAge = (this.content.cookieExpiration || 365) * 24 * 60 * 60;
 
@@ -461,8 +481,8 @@ export default {
       // Build cookie string
       let cookieStr = `${COOKIE_NAME}=${encodeURIComponent(cookieValue)}; max-age=${maxAge}; path=/; SameSite=Lax`;
 
-      // Add domain if configured (for cross-subdomain)
-      const domain = this.content.storageCookieDomain;
+      // Add domain if configured or auto-detected (for cross-subdomain)
+      const domain = this.getEffectiveCookieDomain();
       if (domain && domain.trim()) {
         cookieStr += `; domain=${domain.trim()}`;
       }
@@ -549,9 +569,9 @@ export default {
         console.warn('Failed to clear consent from localStorage:', e);
       }
 
-      // Clear cookie with domain if configured
+      // Clear cookie with domain if configured or auto-detected
       let cookieStr = `${COOKIE_NAME}=; max-age=0; path=/`;
-      const domain = this.content.storageCookieDomain;
+      const domain = this.getEffectiveCookieDomain();
       if (domain && domain.trim()) {
         cookieStr += `; domain=${domain.trim()}`;
       }

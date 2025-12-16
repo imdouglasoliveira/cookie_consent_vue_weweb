@@ -196,12 +196,22 @@ export default {
       defaultValue: true,
       section: "settings",
     },
-    storageCookieDomain: {
-      label: { en: "Cookie Domain (for subdomains)", pt: "Dominio do Cookie (para subdominios)" },
-      type: "Text",
-      defaultValue: "",
+    storageCookieDomainAuto: {
+      label: { en: "Auto-detect Cookie Domain", pt: "Detectar Dominio Automaticamente" },
+      type: "OnOff",
+      defaultValue: true,
       section: "settings",
       hidden: (content) => !content.storageCookieEnabled,
+    },
+    storageCookieDomain: {
+      label: { en: "Cookie Domain", pt: "Dominio do Cookie" },
+      type: "Text",
+      defaultValue: "",
+      options: {
+        placeholder: ".yourdomain.com",
+      },
+      section: "settings",
+      hidden: (content) => !content.storageCookieEnabled || content.storageCookieDomainAuto,
       bindable: true,
     },
 
@@ -293,19 +303,19 @@ export default {
     // COOKIE CATEGORIES
     // ═══════════════════════════════════════════════════════════════
     analyticsEnabled: {
-      label: { en: "Enable Analytics Category", pt: "Habilitar Categoria Analytics" },
+      label: { en: "Analytics", pt: "Analytics" },
       type: "OnOff",
       defaultValue: true,
       section: "settings",
     },
     marketingEnabled: {
-      label: { en: "Enable Marketing Category", pt: "Habilitar Categoria Marketing" },
+      label: { en: "Marketing", pt: "Marketing" },
       type: "OnOff",
       defaultValue: true,
       section: "settings",
     },
     personalizationEnabled: {
-      label: { en: "Enable Personalization Category", pt: "Habilitar Categoria Personalizacao" },
+      label: { en: "Personalization", pt: "Personalizacao" },
       type: "OnOff",
       defaultValue: true,
       section: "settings",
