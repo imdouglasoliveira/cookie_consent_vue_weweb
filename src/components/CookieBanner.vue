@@ -628,6 +628,27 @@ export default {
           font-size: 13px;
         }
       }
+
+      // Override: Floating + Minimal deve ser vertical
+      &.cc-style-minimal {
+        flex-direction: column;
+        align-items: stretch;
+
+        .cc-banner-icon {
+          justify-content: center;
+          margin-bottom: 12px;
+        }
+
+        .cc-banner-content {
+          text-align: center;
+        }
+
+        .cc-banner-actions {
+          flex-direction: column;
+          width: 100%;
+          margin-top: 16px;
+        }
+      }
     }
   }
 
