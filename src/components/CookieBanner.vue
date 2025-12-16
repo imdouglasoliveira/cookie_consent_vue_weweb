@@ -723,6 +723,33 @@ export default {
       .cc-banner-content {
         text-align: center;
       }
+
+      // Override: Bar + Detailed no mobile deve ser vertical
+      &.cc-style-detailed {
+        .cc-banner-content {
+          flex-direction: column;
+          align-items: stretch;
+
+          .cc-banner-message {
+            margin-bottom: 12px;
+          }
+
+          .cc-banner-categories {
+            flex-direction: column;
+            width: 100%;
+            gap: 8px;
+          }
+        }
+
+        .cc-banner-actions {
+          flex-direction: column;
+          width: 100%;
+
+          .cc-btn {
+            width: 100%;
+          }
+        }
+      }
     }
 
     // Banner inline: stack vertical no mobile
