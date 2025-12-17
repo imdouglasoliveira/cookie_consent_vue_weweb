@@ -178,17 +178,17 @@ export default {
     // Data Collection
     collectIpAddress: true,
     // Google Consent Mode v2 (PRD-2)
-    googleConsentModeEnabled: false,
+    googleConsentModeEnabled: true,
     googleConsentDefaultDenied: true,
     googleConsentMapMarketing: true,
     // Meta Pixel (PRD-2)
-    metaPixelEnabled: false,
+    metaPixelEnabled: true,
     // Cross-subdomain storage (PRD-2)
     storageCookieEnabled: true,
     storageCookieDomainAuto: true,
     storageCookieDomain: '',
     // Events options (PRD-2)
-    emitDefaultStateEvent: false,
+    emitDefaultStateEvent: true,
     // Bindable output
     lastConsentData: null,
     // Categories
