@@ -342,6 +342,20 @@ Mark scripts with the `data-cc-category` attribute to control execution:
 </script>
 ```
 
+### Reusing Component Across Multiple Pages (Multi-page Sections)
+
+WeWeb custom components don't automatically persist configuration across pages. To reuse the same configured component on multiple pages:
+
+1. **Configure the component** on the first page (properties, bindings, workflows)
+2. **Rename the Section** containing the component (e.g., `CookieConsent - Main`)
+3. On another page, go to **Add → Multi-page sections → Pages → [source page]**
+4. **Drag the Section** to the destination page
+5. When prompted, choose **Create an instance** (not "Create a copy")
+
+Now the component shares the same configuration across all pages. Changes to one instance update all others.
+
+> **Tip:** Use "Create a copy" only if you need an independent variation on a specific page.
+
 ## Browser Support
 
 - Chrome 80+

@@ -343,6 +343,20 @@ Marque scripts com o atributo `data-cc-category` para controlar execucao:
 </script>
 ```
 
+### Reutilizando o Componente em Varias Paginas (Multi-page Sections)
+
+Componentes customizados do WeWeb nao persistem configuracoes automaticamente entre paginas. Para reutilizar o mesmo componente configurado em varias paginas:
+
+1. **Configure o componente** na primeira pagina (propriedades, bindings, workflows)
+2. **Renomeie a Section** que contem o componente (ex.: `CookieConsent - Main`)
+3. Em outra pagina, va em **Add → Multi-page sections → Pages → [pagina origem]**
+4. **Arraste a Section** para a pagina de destino
+5. Quando perguntado, escolha **Create an instance** (nao "Create a copy")
+
+Agora o componente compartilha a mesma configuracao em todas as paginas. Alteracoes em uma instancia atualizam todas as outras.
+
+> **Dica:** Use "Create a copy" apenas se precisar de uma variacao independente em uma pagina especifica.
+
 ## Suporte de Navegadores
 
 - Chrome 80+
