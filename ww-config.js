@@ -8,20 +8,9 @@ export default {
   },
 
   properties: {
-    // ═══════════════════════════════════════════════════════════════
-    // VISIBILITY CONTROLLER
-    // ═══════════════════════════════════════════════════════════════
-    isOpen: {
-      label: { en: "Is Open (Controller)", pt: "Esta Aberto (Controlador)" },
-      type: "OnOff",
-      defaultValue: null,
-      bindable: true,
-      section: "settings",
-    },
-
-    // ═══════════════════════════════════════════════════════════════
-    // GENERAL SETTINGS
-    // ═══════════════════════════════════════════════════════════════
+    // ╔═══════════════════════════════════════════════════════════════╗
+    // ║  1. BEHAVIOR - Como o componente funciona                     ║
+    // ╚═══════════════════════════════════════════════════════════════╝
     consentMode: {
       label: { en: "Consent Mode", pt: "Modo de Consentimento" },
       type: "TextSelect",
@@ -35,6 +24,132 @@ export default {
         ],
       },
     },
+    cookieExpiration: {
+      label: { en: "Cookie Expiration (days)", pt: "Expiracao do Cookie (dias)" },
+      type: "Number",
+      defaultValue: 365,
+      section: "settings",
+      options: {
+        min: 1,
+        max: 730,
+        step: 1,
+      },
+    },
+    isOpen: {
+      label: { en: "Is Open (Controller)", pt: "Esta Aberto (Controlador)" },
+      type: "OnOff",
+      defaultValue: null,
+      bindable: true,
+      section: "settings",
+    },
+
+    // ╔═══════════════════════════════════════════════════════════════╗
+    // ║  2. COOKIE CATEGORIES - Categorias habilitadas                ║
+    // ╚═══════════════════════════════════════════════════════════════╝
+    analyticsEnabled: {
+      label: { en: "Analytics", pt: "Analytics" },
+      type: "OnOff",
+      defaultValue: true,
+      section: "settings",
+    },
+    marketingEnabled: {
+      label: { en: "Marketing", pt: "Marketing" },
+      type: "OnOff",
+      defaultValue: true,
+      section: "settings",
+    },
+    personalizationEnabled: {
+      label: { en: "Personalization", pt: "Personalizacao" },
+      type: "OnOff",
+      defaultValue: true,
+      section: "settings",
+    },
+
+    // ╔═══════════════════════════════════════════════════════════════╗
+    // ║  3. INTEGRATIONS - Google, Meta, etc                          ║
+    // ╚═══════════════════════════════════════════════════════════════╝
+    googleConsentModeEnabled: {
+      label: { en: "Enable Google Consent Mode v2", pt: "Habilitar Google Consent Mode v2" },
+      type: "OnOff",
+      defaultValue: true,
+      section: "settings",
+    },
+    googleConsentDefaultDenied: {
+      label: { en: "Default Denied on Load", pt: "Default Negado ao Carregar" },
+      type: "OnOff",
+      defaultValue: true,
+      section: "settings",
+      hidden: (content) => !content.googleConsentModeEnabled,
+    },
+    googleConsentMapMarketing: {
+      label: { en: "Map Marketing to Ad Signals", pt: "Mapear Marketing para Sinais de Ads" },
+      type: "OnOff",
+      defaultValue: true,
+      section: "settings",
+      hidden: (content) => !content.googleConsentModeEnabled,
+    },
+    metaPixelEnabled: {
+      label: { en: "Enable Meta Pixel Consent", pt: "Habilitar Consentimento Meta Pixel" },
+      type: "OnOff",
+      defaultValue: true,
+      section: "settings",
+    },
+
+    // ╔═══════════════════════════════════════════════════════════════╗
+    // ║  4. STORAGE - Armazenamento e cross-subdomain                 ║
+    // ╚═══════════════════════════════════════════════════════════════╝
+    storageCookieEnabled: {
+      label: { en: "Enable Cookie Storage", pt: "Habilitar Armazenamento em Cookie" },
+      type: "OnOff",
+      defaultValue: true,
+      section: "settings",
+    },
+    storageCookieDomainAuto: {
+      label: { en: "Auto-detect Cookie Domain", pt: "Detectar Dominio Automaticamente" },
+      type: "OnOff",
+      defaultValue: true,
+      section: "settings",
+      hidden: (content) => !content.storageCookieEnabled,
+    },
+    storageCookieDomain: {
+      label: { en: "Cookie Domain", pt: "Dominio do Cookie" },
+      type: "Text",
+      defaultValue: "",
+      options: {
+        placeholder: ".yourdomain.com",
+      },
+      section: "settings",
+      hidden: (content) => !content.storageCookieEnabled || content.storageCookieDomainAuto,
+      bindable: true,
+    },
+
+    // ╔═══════════════════════════════════════════════════════════════╗
+    // ║  5. DATA COLLECTION - Coleta de dados adicionais              ║
+    // ╚═══════════════════════════════════════════════════════════════╝
+    collectIpAddress: {
+      label: { en: "Collect IP Address & Geolocation", pt: "Coletar Endereco IP e Geolocalizacao" },
+      type: "OnOff",
+      defaultValue: true,
+      section: "settings",
+    },
+    emitDefaultStateEvent: {
+      label: { en: "Emit Consent Defaulted Event", pt: "Emitir Evento Consent Defaulted" },
+      type: "OnOff",
+      defaultValue: true,
+      section: "settings",
+    },
+    lastConsentData: {
+      label: { en: "Last Consent Data", pt: "Ultimos Dados de Consentimento" },
+      type: "Object",
+      defaultValue: null,
+      bindable: true,
+      hidden: true,
+      section: "settings",
+    },
+
+    // ╔═══════════════════════════════════════════════════════════════╗
+    // ║  6. LAYOUT & APPEARANCE - Visual do banner                    ║
+    // ╚═══════════════════════════════════════════════════════════════╝
     bannerLayout: {
       label: { en: "Banner Layout", pt: "Layout do Banner" },
       type: "TextSelect",
@@ -99,75 +214,10 @@ export default {
         ],
       },
     },
-    showManager: {
-      label: { en: "Show Manager Button", pt: "Exibir Botao Gerenciador" },
-      type: "OnOff",
-      defaultValue: true,
-      section: "settings",
-    },
-    managerPosition: {
-      label: { en: "Manager Position", pt: "Posicao do Gerenciador" },
-      type: "TextSelect",
-      defaultValue: "bottom-left",
-      section: "settings",
-      hidden: (content) => !content.showManager,
-      options: {
-        options: [
-          { value: "bottom-left", label: { en: "Bottom Left", pt: "Inferior Esquerda" } },
-          { value: "bottom-right", label: { en: "Bottom Right", pt: "Inferior Direita" } },
-        ],
-      },
-    },
-    cookieExpiration: {
-      label: { en: "Cookie Expiration (days)", pt: "Expiracao do Cookie (dias)" },
-      type: "Number",
-      defaultValue: 365,
-      section: "settings",
-      options: {
-        min: 1,
-        max: 730,
-        step: 1,
-      },
-    },
-    policyPageUrl: {
-      label: { en: "Privacy Policy URL", pt: "URL da Politica de Privacidade" },
-      type: "Text",
-      defaultValue: "/privacy-policy",
-      section: "settings",
-      bindable: true,
-    },
-    showEditorPlaceholder: {
-      label: { en: "Show Editor Placeholder", pt: "Exibir Placeholder no Editor" },
-      type: "OnOff",
-      defaultValue: true,
-      section: "settings",
-    },
 
-    // ═══════════════════════════════════════════════════════════════
-    // DATA COLLECTION OPTIONS
-    // ═══════════════════════════════════════════════════════════════
-    collectIpAddress: {
-      label: { en: "Collect IP Address & Geolocation", pt: "Coletar Endereco IP e Geolocalizacao" },
-      type: "OnOff",
-      defaultValue: true,
-      section: "settings",
-    },
-
-    // ═══════════════════════════════════════════════════════════════
-    // BINDABLE OUTPUT DATA (for workflows)
-    // ═══════════════════════════════════════════════════════════════
-    lastConsentData: {
-      label: { en: "Last Consent Data", pt: "Ultimos Dados de Consentimento" },
-      type: "Object",
-      defaultValue: null,
-      bindable: true,
-      hidden: true,
-      section: "settings",
-    },
-
-    // ═══════════════════════════════════════════════════════════════
-    // BUTTON & UI OPTIONS
-    // ═══════════════════════════════════════════════════════════════
+    // ╔═══════════════════════════════════════════════════════════════╗
+    // ║  7. BUTTONS & UI ELEMENTS - Botoes e elementos de UI          ║
+    // ╚═══════════════════════════════════════════════════════════════╝
     buttonLayout: {
       label: { en: "Button Layout", pt: "Layout dos Botoes" },
       type: "TextSelect",
@@ -226,32 +276,51 @@ export default {
       defaultValue: true,
       section: "settings",
     },
-
-    // ═══════════════════════════════════════════════════════════════
-    // COOKIE CATEGORIES
-    // ═══════════════════════════════════════════════════════════════
-    analyticsEnabled: {
-      label: { en: "Enable Analytics Category", pt: "Habilitar Categoria Analytics" },
-      type: "OnOff",
-      defaultValue: true,
+    policyPageUrl: {
+      label: { en: "Privacy Policy URL", pt: "URL da Politica de Privacidade" },
+      type: "Text",
+      defaultValue: "/privacy-policy",
       section: "settings",
-    },
-    marketingEnabled: {
-      label: { en: "Enable Marketing Category", pt: "Habilitar Categoria Marketing" },
-      type: "OnOff",
-      defaultValue: true,
-      section: "settings",
-    },
-    personalizationEnabled: {
-      label: { en: "Enable Personalization Category", pt: "Habilitar Categoria Personalizacao" },
-      type: "OnOff",
-      defaultValue: true,
-      section: "settings",
+      bindable: true,
+      hidden: (content) => !content.showPolicyLink,
     },
 
-    // ═══════════════════════════════════════════════════════════════
-    // CONTENT / i18n
-    // ═══════════════════════════════════════════════════════════════
+    // ╔═══════════════════════════════════════════════════════════════╗
+    // ║  8. MANAGER BUTTON - Botao gerenciador                        ║
+    // ╚═══════════════════════════════════════════════════════════════╝
+    showManager: {
+      label: { en: "Show Manager Button", pt: "Exibir Botao Gerenciador" },
+      type: "OnOff",
+      defaultValue: true,
+      section: "settings",
+    },
+    managerPosition: {
+      label: { en: "Manager Position", pt: "Posicao do Gerenciador" },
+      type: "TextSelect",
+      defaultValue: "bottom-left",
+      section: "settings",
+      hidden: (content) => !content.showManager,
+      options: {
+        options: [
+          { value: "bottom-left", label: { en: "Bottom Left", pt: "Inferior Esquerda" } },
+          { value: "bottom-right", label: { en: "Bottom Right", pt: "Inferior Direita" } },
+        ],
+      },
+    },
+
+    // ╔═══════════════════════════════════════════════════════════════╗
+    // ║  9. EDITOR - Opcoes do editor WeWeb                           ║
+    // ╚═══════════════════════════════════════════════════════════════╝
+    showEditorPlaceholder: {
+      label: { en: "Show Editor Placeholder", pt: "Exibir Placeholder no Editor" },
+      type: "OnOff",
+      defaultValue: true,
+      section: "settings",
+    },
+
+    // ╔═══════════════════════════════════════════════════════════════╗
+    // ║  10. CONTENT / i18n - Textos customizaveis                    ║
+    // ╚═══════════════════════════════════════════════════════════════╝
     bannerTitle: {
       label: { en: "Banner Title", pt: "Titulo do Banner" },
       type: "Text",
@@ -594,6 +663,22 @@ export default {
       label: { en: "Get Last Consent", pt: "Obter Ultimo Consentimento" },
       action: "getLastConsent",
     },
+    {
+      label: { en: "Set Consent", pt: "Definir Consentimento" },
+      action: "setConsent",
+      args: [
+        {
+          name: "categories",
+          type: "object",
+          label: { en: "Categories", pt: "Categorias" },
+        },
+        {
+          name: "options",
+          type: "object",
+          label: { en: "Options (source)", pt: "Opcoes (source)" },
+        },
+      ],
+    },
   ],
 
   // ═══════════════════════════════════════════════════════════════
@@ -832,6 +917,41 @@ export default {
         page: {},
         source: {},
         ip: {},
+      },
+    },
+    {
+      name: "consentDefaulted",
+      label: { en: "Cookie: Consent Defaulted", pt: "Cookie: Consentimento Padrao Aplicado" },
+      event: {
+        hasConsent: false,
+        effectiveConsent: {
+          analytics_storage: "denied",
+          ad_storage: "denied",
+          ad_user_data: "denied",
+          ad_personalization: "denied",
+        },
+        timestamp: "",
+      },
+    },
+    {
+      name: "consentChanged",
+      label: { en: "Cookie: Consent Changed", pt: "Cookie: Consentimento Alterado" },
+      event: {
+        consentId: "",
+        categories: {
+          essential: true,
+          analytics: false,
+          marketing: false,
+          personalization: false,
+        },
+        previousCategories: {
+          essential: true,
+          analytics: false,
+          marketing: false,
+          personalization: false,
+        },
+        timestamp: "",
+        source: "",
       },
     },
   ],
