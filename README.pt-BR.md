@@ -47,6 +47,11 @@ npm run build
 - [x] **Nova action `setConsent()`**: Controle programatico de consentimento
 - [x] **Novos eventos**: `consentDefaulted`, `consentChanged`
 
+### Comportamento do Botao Flutuante (v2.1)
+- [x] **Visibilidade inteligente**: Botao flutuante so aparece apos recusar ou fechar (nunca apos aceitar)
+- [x] **Configuravel apos recusa**: Controle se o float aparece apos usuario recusar todos os cookies
+- [x] **Deteccao de Bots/Crawlers**: Auto-consentimento para bots de busca (Googlebot, Bingbot, etc.)
+
 ### Modos de Consentimento
 - [x] **Opt-in** (padrao LGPD/GDPR): Todos os cookies nao-essenciais bloqueados ate consentimento explicito
 - [x] **Opt-out**: Cookies habilitados por padrao, usuario pode recusar
@@ -121,13 +126,15 @@ cookies_vue/
 
 | Propriedade | Tipo | Padrao | Descricao |
 |-------------|------|--------|-----------|
-| `googleConsentModeEnabled` | OnOff | `false` | Habilitar Google Consent Mode v2 |
+| `googleConsentModeEnabled` | OnOff | `true` | Habilitar Google Consent Mode v2 |
 | `googleConsentDefaultDenied` | OnOff | `true` | Disparar default denied no carregamento da pagina |
 | `googleConsentMapMarketing` | OnOff | `true` | Mapear categoria marketing para sinais de ads |
-| `metaPixelEnabled` | OnOff | `false` | Habilitar notificacoes de consentimento do Meta Pixel |
+| `metaPixelEnabled` | OnOff | `true` | Habilitar notificacoes de consentimento do Meta Pixel |
 | `storageCookieEnabled` | OnOff | `true` | Habilitar armazenamento em cookie para cross-subdomain |
 | `storageCookieDomain` | Text | `""` | Dominio do cookie (ex.: `.meudominio.com`) |
-| `emitDefaultStateEvent` | OnOff | `false` | Emitir evento consentDefaulted no carregamento |
+| `emitDefaultStateEvent` | OnOff | `true` | Emitir evento consentDefaulted no carregamento |
+| `autoConsentBots` | OnOff | `false` | Auto-consentimento para bots/crawlers |
+| `showManagerAfterDecline` | OnOff | `true` | Exibir botao flutuante apos usuario recusar |
 
 ### Estilizacao
 

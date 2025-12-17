@@ -47,6 +47,11 @@ npm run build
 - [x] **New `setConsent()` action**: Programmatic consent control
 - [x] **New events**: `consentDefaulted`, `consentChanged`
 
+### Float Button Behavior (v2.1)
+- [x] **Smart visibility**: Float button only appears after decline or close (never after accept)
+- [x] **Configurable after decline**: Control whether float shows after user declines all cookies
+- [x] **Bot/Crawler detection**: Auto-consent for search engine bots (Googlebot, Bingbot, etc.)
+
 ### Consent Modes
 - [x] **Opt-in** (GDPR default): All non-essential cookies blocked until explicit consent
 - [x] **Opt-out**: Cookies enabled by default, user can refuse
@@ -120,13 +125,15 @@ cookies_vue/
 
 | Property | Type | Default | Description |
 |----------|------|---------|-------------|
-| `googleConsentModeEnabled` | OnOff | `false` | Enable Google Consent Mode v2 |
+| `googleConsentModeEnabled` | OnOff | `true` | Enable Google Consent Mode v2 |
 | `googleConsentDefaultDenied` | OnOff | `true` | Fire default denied on page load |
 | `googleConsentMapMarketing` | OnOff | `true` | Map marketing category to ad signals |
-| `metaPixelEnabled` | OnOff | `false` | Enable Meta Pixel consent notifications |
+| `metaPixelEnabled` | OnOff | `true` | Enable Meta Pixel consent notifications |
 | `storageCookieEnabled` | OnOff | `true` | Enable cookie storage for cross-subdomain |
 | `storageCookieDomain` | Text | `""` | Cookie domain (e.g., `.mydomain.com`) |
-| `emitDefaultStateEvent` | OnOff | `false` | Emit consentDefaulted event on load |
+| `emitDefaultStateEvent` | OnOff | `true` | Emit consentDefaulted event on load |
+| `autoConsentBots` | OnOff | `false` | Auto-consent for bots/crawlers |
+| `showManagerAfterDecline` | OnOff | `true` | Show float button after user declines |
 
 ### Styling
 
