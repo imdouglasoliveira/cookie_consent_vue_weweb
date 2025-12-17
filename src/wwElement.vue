@@ -27,7 +27,7 @@
     <!-- Cookie Banner -->
     <CookieBanner
       v-if="showBannerState"
-      :content="content"
+      :content="effectiveContent"
       :temp-preferences="tempPreferences"
       @accept-all="handleAcceptAll"
       @decline-all="handleDeclineAll"
@@ -39,7 +39,7 @@
     <!-- Preferences Modal -->
     <CookiePreferences
       v-if="showPreferencesState"
-      :content="content"
+      :content="effectiveContent"
       :temp-preferences="tempPreferences"
       @close="handleClosePreferences"
       @accept-all="handleAcceptAll"
@@ -51,7 +51,7 @@
     <!-- Manager Button -->
     <CookieManager
       v-if="showManagerState"
-      :content="content"
+      :content="effectiveContent"
       @open-preferences="handleOpenPreferences"
     />
   </div>
@@ -64,6 +64,42 @@ import CookieManager from './components/CookieManager.vue';
 
 const STORAGE_KEY = 'cookieConsent';
 const COOKIE_NAME = 'cookieConsent';
+
+// Translations for component language selector
+const TRANSLATIONS = {
+  'en-US': {
+    bannerMessage: 'We use cookies to enhance your browsing experience, analyze site traffic, and personalize content.',
+    acceptAllLabel: 'Accept All',
+    declineAllLabel: 'Decline',
+    preferencesLabel: 'Preferences',
+    savePreferencesLabel: 'Save Preferences',
+    policyLinkLabel: 'Privacy Policy',
+    essentialLabel: 'Essential',
+    essentialDescription: 'Required for basic website functionality and security.',
+    analyticsLabel: 'Analytics',
+    analyticsDescription: 'Help us understand how visitors interact with our website.',
+    marketingLabel: 'Marketing',
+    marketingDescription: 'Used to deliver relevant advertisements and track campaign effectiveness.',
+    personalizationLabel: 'Personalization',
+    personalizationDescription: 'Remember your preferences and customize your experience.',
+  },
+  'pt-BR': {
+    bannerMessage: 'Utilizamos cookies para melhorar sua experiência de navegação, analisar o tráfego do site e personalizar o conteúdo.',
+    acceptAllLabel: 'Aceito',
+    declineAllLabel: 'Não aceito',
+    preferencesLabel: 'Preferências',
+    savePreferencesLabel: 'Salvar Preferência',
+    policyLinkLabel: 'Política de Privacidade',
+    essentialLabel: 'Essencial',
+    essentialDescription: 'Necessário para o funcionamento básico e a segurança do site.',
+    analyticsLabel: 'Analytics',
+    analyticsDescription: 'Ajude-nos a entender como os visitantes interagem com nosso site.',
+    marketingLabel: 'Marketing',
+    marketingDescription: 'Utilizado para exibir anúncios relevantes e monitorar a eficácia das campanhas.',
+    personalizationLabel: 'Personalização',
+    personalizationDescription: 'Lembre-se das suas preferências e personalize a sua experiência.',
+  },
+};
 
 export default {
   name: 'CookieConsent',
@@ -177,11 +213,31 @@ export default {
         '--cc-shadow': shadowMap[this.content.boxShadow] || shadowMap.lg,
       };
     },
+    effectiveContent() {
+      const lang = this.content.componentLanguage || 'en-US';
+
+      // If English, return content as-is (defaults are already in English)
+      if (lang === 'en-US') return this.content;
+
+      const translations = TRANSLATIONS[lang];
+      if (!translations) return this.content;
+
+      // Create copy with translations applied for text fields
+      const result = { ...this.content };
+      for (const key of Object.keys(translations)) {
+        // Apply translation ONLY if field still has the English default value
+        if (this.content[key] === TRANSLATIONS['en-US'][key]) {
+          result[key] = translations[key];
+        }
+      }
+      return result;
+    },
   },
   wwDefaultContent: {
     // Visibility Controller
     isOpen: null,
     // General
+    componentLanguage: 'en-US',
     consentMode: 'opt-in',
     bannerStyle: 'standard',
     position: 'bottom-left',
@@ -190,6 +246,7 @@ export default {
     managerPosition: 'bottom-left',
     cookieExpiration: 365,
     policyPageUrl: '/privacy-policy',
+    policyLinkNewTab: true,
     showEditorPlaceholder: true,
     // Layout
     bannerLayout: 'card',

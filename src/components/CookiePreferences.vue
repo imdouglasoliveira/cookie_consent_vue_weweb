@@ -104,8 +104,8 @@
         <a
           :href="content.policyPageUrl"
           class="cc-policy-link"
-          target="_blank"
-          rel="noopener noreferrer"
+          :target="content.policyLinkNewTab !== false ? '_blank' : '_self'"
+          :rel="content.policyLinkNewTab !== false ? 'noopener noreferrer' : ''"
         >
           {{ content.policyLinkLabel }}
         </a>
@@ -286,6 +286,10 @@ export default {
   border: none;
   white-space: nowrap;
   flex: 1;
+  text-align: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 
   &:focus {
     outline: 2px solid var(--cc-primary-bg, #10b981);

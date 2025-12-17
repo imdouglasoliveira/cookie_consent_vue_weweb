@@ -11,6 +11,18 @@ export default {
     // ╔═══════════════════════════════════════════════════════════════╗
     // ║  1. CONSENT BEHAVIOR - Modo e regras de consentimento         ║
     // ╚═══════════════════════════════════════════════════════════════╝
+    componentLanguage: {
+      label: { en: "Component Language", pt: "Idioma do Componente" },
+      type: "TextSelect",
+      defaultValue: "en-US",
+      section: "settings",
+      options: {
+        options: [
+          { value: "en-US", label: { en: "English (US)", pt: "Ingles (EUA)" } },
+          { value: "pt-BR", label: { en: "Portuguese (BR)", pt: "Portugues (BR)" } },
+        ],
+      },
+    },
     consentMode: {
       label: { en: "Consent Mode", pt: "Modo de Consentimento" },
       type: "TextSelect",
@@ -285,6 +297,13 @@ export default {
       defaultValue: "/privacy-policy",
       section: "settings",
       bindable: true,
+      hidden: (content) => !content.showPolicyLink,
+    },
+    policyLinkNewTab: {
+      label: { en: "Open Policy in New Tab", pt: "Abrir Politica em Nova Aba" },
+      type: "OnOff",
+      defaultValue: true,
+      section: "settings",
       hidden: (content) => !content.showPolicyLink,
     },
 

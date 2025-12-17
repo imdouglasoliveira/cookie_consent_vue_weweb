@@ -52,6 +52,12 @@ npm run build
 - [x] **Configurable after decline**: Control whether float shows after user declines all cookies
 - [x] **Bot/Crawler detection**: Auto-consent for search engine bots (Googlebot, Bingbot, etc.)
 
+### New Features (v2.2)
+- [x] **Language selector**: Switch component language between English (US) and Portuguese (BR)
+- [x] **Built-in translations**: Pre-defined translations for all labels (preserves customizations)
+- [x] **Privacy link target**: Configure whether privacy policy link opens in new tab or same tab
+- [x] **Centered button text**: Button text is always centered for consistent appearance
+
 ### Consent Modes
 - [x] **Opt-in** (GDPR default): All non-essential cookies blocked until explicit consent
 - [x] **Opt-out**: Cookies enabled by default, user can refuse
@@ -104,12 +110,14 @@ cookies_vue/
 
 | Property | Type | Default | Description |
 |----------|------|---------|-------------|
+| `componentLanguage` | TextSelect | `en-US` | Component language: en-US, pt-BR |
 | `consentMode` | TextSelect | `opt-in` | Consent mode: opt-in, opt-out, informational |
 | `bannerStyle` | TextSelect | `standard` | Visual style: minimal, standard, detailed |
 | `position` | TextSelect | `bottom-left` | Banner position on screen |
 | `showManager` | OnOff | `true` | Show persistent manager button |
 | `cookieExpiration` | Number | `365` | Days until consent expires |
 | `policyPageUrl` | Text | `""` | URL to privacy policy page |
+| `policyLinkNewTab` | OnOff | `true` | Open privacy policy link in new tab |
 
 ### Cookie Categories
 

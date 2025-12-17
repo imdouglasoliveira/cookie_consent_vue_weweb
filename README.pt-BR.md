@@ -52,6 +52,12 @@ npm run build
 - [x] **Configuravel apos recusa**: Controle se o float aparece apos usuario recusar todos os cookies
 - [x] **Deteccao de Bots/Crawlers**: Auto-consentimento para bots de busca (Googlebot, Bingbot, etc.)
 
+### Novas Funcionalidades (v2.2)
+- [x] **Seletor de idioma**: Alterne o idioma do componente entre Ingles (EUA) e Portugues (BR)
+- [x] **Traducoes integradas**: Traducoes pre-definidas para todos os rotulos (preserva customizacoes)
+- [x] **Alvo do link de privacidade**: Configure se o link de politica de privacidade abre em nova aba ou mesma aba
+- [x] **Texto centralizado nos botoes**: Texto dos botoes sempre centralizado para aparencia consistente
+
 ### Modos de Consentimento
 - [x] **Opt-in** (padrao LGPD/GDPR): Todos os cookies nao-essenciais bloqueados ate consentimento explicito
 - [x] **Opt-out**: Cookies habilitados por padrao, usuario pode recusar
@@ -105,12 +111,14 @@ cookies_vue/
 
 | Propriedade | Tipo | Padrao | Descricao |
 |-------------|------|--------|-----------|
+| `componentLanguage` | TextSelect | `en-US` | Idioma do componente: en-US, pt-BR |
 | `consentMode` | TextSelect | `opt-in` | Modo de consentimento: opt-in, opt-out, informational |
 | `bannerStyle` | TextSelect | `standard` | Estilo visual: minimal, standard, detailed |
 | `position` | TextSelect | `bottom-left` | Posicao do banner na tela |
 | `showManager` | OnOff | `true` | Mostrar botao gerenciador persistente |
 | `cookieExpiration` | Number | `365` | Dias ate o consentimento expirar |
 | `policyPageUrl` | Text | `""` | URL para pagina de politica de privacidade |
+| `policyLinkNewTab` | OnOff | `true` | Abrir link de politica de privacidade em nova aba |
 
 ### Categorias de Cookies
 
