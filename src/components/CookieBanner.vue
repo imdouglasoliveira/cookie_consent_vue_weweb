@@ -23,7 +23,7 @@
         class="cc-close-btn"
         data-cc="close"
         aria-label="Close"
-        @click="$emit('decline-all')"
+        @click="$emit('close')"
       >
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
@@ -165,7 +165,7 @@ export default {
     content: { type: Object, required: true },
     tempPreferences: { type: Object, required: true },
   },
-  emits: ['accept-all', 'decline-all', 'open-preferences', 'update-preference'],
+  emits: ['accept-all', 'decline-all', 'open-preferences', 'update-preference', 'close'],
   computed: {
     positionClass() {
       if (this.content.bannerLayout === 'modal') {

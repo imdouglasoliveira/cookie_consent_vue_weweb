@@ -33,6 +33,7 @@
       @decline-all="handleDeclineAll"
       @open-preferences="handleOpenPreferences"
       @update-preference="handleUpdatePreference"
+      @close="handleCloseBanner"
     />
 
     <!-- Preferences Modal -->
@@ -79,6 +80,8 @@ export default {
       showBannerState: false,
       showPreferencesState: false,
       consentGiven: false,
+      // User action tracking: null | 'accepted' | 'declined' | 'closed'
+      userAction: null,
       tempPreferences: {
         analytics: false,
         marketing: false,
@@ -117,7 +120,30 @@ export default {
       );
     },
     showManagerState() {
-      return this.content.showManager && this.consentGiven && !this.showBannerState && !this.showPreferencesState;
+      // If manager is disabled globally, don't show
+      if (!this.content.showManager) return false;
+
+      // If banner or preferences are open, don't show
+      if (this.showBannerState || this.showPreferencesState) return false;
+
+      // Float logic:
+      // - NEVER show if user accepted (any category)
+      // - ALWAYS show if user closed without deciding
+      // - Show if user declined (controlled by showManagerAfterDecline)
+
+      // If user accepted any category, never show float
+      if (this.userAction === 'accepted') return false;
+
+      // If user closed banner without deciding, always show float
+      if (this.userAction === 'closed') return true;
+
+      // If user declined all, show based on config (default: true)
+      if (this.userAction === 'declined') {
+        return this.content.showManagerAfterDecline !== false;
+      }
+
+      // No action yet (first visit, banner visible) - don't show float
+      return false;
     },
     hostClass() {
       return {
@@ -160,6 +186,7 @@ export default {
     bannerStyle: 'standard',
     position: 'bottom-left',
     showManager: true,
+    showManagerAfterDecline: true,
     managerPosition: 'bottom-left',
     cookieExpiration: 365,
     policyPageUrl: '/privacy-policy',
@@ -187,6 +214,8 @@ export default {
     storageCookieEnabled: true,
     storageCookieDomainAuto: true,
     storageCookieDomain: '',
+    // Bot detection
+    autoConsentBots: false,
     // Events options (PRD-2)
     emitDefaultStateEvent: true,
     // Bindable output
@@ -260,6 +289,22 @@ export default {
     this.fetchIpData();
   },
   methods: {
+    // ═══════════════════════════════════════════════════════════════
+    // BOT DETECTION
+    // ═══════════════════════════════════════════════════════════════
+    isBot() {
+      const botPatterns = [
+        'googlebot', 'bingbot', 'slurp', 'duckduckbot',
+        'baiduspider', 'yandexbot', 'facebookexternalhit',
+        'twitterbot', 'linkedinbot', 'whatsapp', 'telegrambot',
+        'applebot', 'pinterest', 'semrushbot', 'ahrefsbot',
+        'mj12bot', 'lighthouse', 'pagespeed', 'gtmetrix',
+        'headless', 'phantom', 'selenium', 'puppeteer'
+      ];
+      const ua = (navigator.userAgent || '').toLowerCase();
+      return botPatterns.some(bot => ua.includes(bot));
+    },
+
     // ═══════════════════════════════════════════════════════════════
     // IP ADDRESS COLLECTION
     // ═══════════════════════════════════════════════════════════════
@@ -673,6 +718,22 @@ export default {
       // Initialize Google Consent Mode default (must be early)
       this.initGoogleConsentDefault();
 
+      // Auto-consent for bots/crawlers if enabled
+      if (this.content.autoConsentBots && this.isBot()) {
+        this.consentGiven = true;
+        this.showBannerState = false;
+        // Grant all categories for bots (for proper tracking/SEO)
+        const botCategories = {
+          analytics: true,
+          marketing: true,
+          personalization: true,
+        };
+        this.tempPreferences = { ...botCategories };
+        this.updateGoogleConsentMode(botCategories);
+        this.updateMetaPixelConsent(botCategories);
+        return;
+      }
+
       // Try to get consent from localStorage first
       let consent = this.getStoredConsent();
 
@@ -688,6 +749,11 @@ export default {
           marketing: consent.categories?.marketing || false,
           personalization: consent.categories?.personalization || false,
         };
+        // Restore userAction based on stored consent
+        const acceptedAny = this.tempPreferences.analytics ||
+                           this.tempPreferences.marketing ||
+                           this.tempPreferences.personalization;
+        this.userAction = acceptedAny ? 'accepted' : 'declined';
         this.showBannerState = false;
 
         // Apply consent to Google Consent Mode and Meta Pixel
@@ -745,6 +811,7 @@ export default {
       const sourceMethod = fromPreferences ? 'preferences' : 'banner';
       const consentData = this.saveConsent(categories, 'acceptAll', sourceMethod);
       this.consentGiven = true;
+      this.userAction = 'accepted';
       this.tempPreferences = { ...categories };
       this.showBannerState = false;
       this.showPreferencesState = false;
@@ -796,6 +863,7 @@ export default {
       const sourceMethod = fromPreferences ? 'preferences' : 'banner';
       const consentData = this.saveConsent(categories, 'declineAll', sourceMethod);
       this.consentGiven = true;
+      this.userAction = 'declined';
       this.tempPreferences = { ...categories };
       this.showBannerState = false;
       this.showPreferencesState = false;
@@ -842,6 +910,17 @@ export default {
       this.$emit('trigger-event', { name: 'preferencesOpened', event: {} });
     },
 
+    handleCloseBanner() {
+      // User closed banner without making a decision (X button)
+      this.showBannerState = false;
+      this.userAction = 'closed';
+
+      this.$emit('trigger-event', {
+        name: 'bannerHidden',
+        event: { reason: 'closed' },
+      });
+    },
+
     handleClosePreferences() {
       this.showPreferencesState = false;
 
@@ -860,6 +939,11 @@ export default {
     handleSavePreferences() {
       const consentData = this.saveConsent(this.tempPreferences, 'savePreferences', 'preferences');
       this.consentGiven = true;
+      // Determine if user accepted any category or declined all
+      const acceptedAny = this.tempPreferences.analytics ||
+                         this.tempPreferences.marketing ||
+                         this.tempPreferences.personalization;
+      this.userAction = acceptedAny ? 'accepted' : 'declined';
       this.showPreferencesState = false;
       this.showBannerState = false;
 
@@ -948,6 +1032,10 @@ export default {
 
     hideBanner() {
       this.showBannerState = false;
+      // If no consent given yet, mark as closed (for float to appear)
+      if (!this.consentGiven) {
+        this.userAction = 'closed';
+      }
       this.$emit('trigger-event', {
         name: 'bannerHidden',
         event: { reason: 'manual' },
@@ -984,6 +1072,7 @@ export default {
     resetConsent() {
       this.clearConsent();
       this.consentGiven = false;
+      this.userAction = null;
       this.tempPreferences = {
         analytics: false,
         marketing: false,
@@ -1053,6 +1142,11 @@ export default {
       const consentData = this.saveConsent(normalizedCategories, 'setConsent', sourceMethod);
 
       this.consentGiven = true;
+      // Determine userAction based on categories
+      const acceptedAny = normalizedCategories.analytics ||
+                         normalizedCategories.marketing ||
+                         normalizedCategories.personalization;
+      this.userAction = acceptedAny ? 'accepted' : 'declined';
       this.tempPreferences = { ...normalizedCategories };
       this.showBannerState = false;
       this.showPreferencesState = false;
