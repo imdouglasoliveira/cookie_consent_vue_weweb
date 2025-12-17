@@ -9,7 +9,7 @@ export default {
 
   properties: {
     // ╔═══════════════════════════════════════════════════════════════╗
-    // ║  1. BEHAVIOR - Como o componente funciona                     ║
+    // ║  1. CONSENT BEHAVIOR - Modo e regras de consentimento         ║
     // ╚═══════════════════════════════════════════════════════════════╝
     consentMode: {
       label: { en: "Consent Mode", pt: "Modo de Consentimento" },
@@ -35,11 +35,10 @@ export default {
         step: 1,
       },
     },
-    isOpen: {
-      label: { en: "Is Open (Controller)", pt: "Esta Aberto (Controlador)" },
+    autoConsentBots: {
+      label: { en: "Auto-consent for Bots/Crawlers", pt: "Auto-consentir para Bots/Crawlers" },
       type: "OnOff",
-      defaultValue: null,
-      bindable: true,
+      defaultValue: false,
       section: "settings",
     },
 
@@ -66,7 +65,7 @@ export default {
     },
 
     // ╔═══════════════════════════════════════════════════════════════╗
-    // ║  3. INTEGRATIONS - Google, Meta, etc                          ║
+    // ║  3. INTEGRATIONS - Google Consent Mode, Meta Pixel            ║
     // ╚═══════════════════════════════════════════════════════════════╝
     googleConsentModeEnabled: {
       label: { en: "Enable Google Consent Mode v2", pt: "Habilitar Google Consent Mode v2" },
@@ -124,7 +123,7 @@ export default {
     },
 
     // ╔═══════════════════════════════════════════════════════════════╗
-    // ║  5. DATA COLLECTION - Coleta de dados adicionais              ║
+    // ║  5. DATA COLLECTION - Coleta de dados e eventos               ║
     // ╚═══════════════════════════════════════════════════════════════╝
     collectIpAddress: {
       label: { en: "Collect IP Address & Geolocation", pt: "Coletar Endereco IP e Geolocalizacao" },
@@ -148,7 +147,7 @@ export default {
     },
 
     // ╔═══════════════════════════════════════════════════════════════╗
-    // ║  6. LAYOUT & APPEARANCE - Visual do banner                    ║
+    // ║  6. BANNER LAYOUT - Layout e posicionamento do banner         ║
     // ╚═══════════════════════════════════════════════════════════════╝
     bannerLayout: {
       label: { en: "Banner Layout", pt: "Layout do Banner" },
@@ -199,7 +198,7 @@ export default {
       },
     },
     position: {
-      label: { en: "Position", pt: "Posicao" },
+      label: { en: "Banner Position", pt: "Posicao do Banner" },
       type: "TextSelect",
       defaultValue: "bottom-left",
       section: "settings",
@@ -216,7 +215,7 @@ export default {
     },
 
     // ╔═══════════════════════════════════════════════════════════════╗
-    // ║  7. BUTTONS & UI ELEMENTS - Botoes e elementos de UI          ║
+    // ║  7. BANNER BUTTONS - Botoes do banner                         ║
     // ╚═══════════════════════════════════════════════════════════════╝
     buttonLayout: {
       label: { en: "Button Layout", pt: "Layout dos Botoes" },
@@ -249,6 +248,10 @@ export default {
       defaultValue: false,
       section: "settings",
     },
+
+    // ╔═══════════════════════════════════════════════════════════════╗
+    // ║  8. BANNER UI ELEMENTS - Elementos visuais do banner          ║
+    // ╚═══════════════════════════════════════════════════════════════╝
     showCookieIcon: {
       label: { en: "Show Cookie Icon", pt: "Exibir Icone de Cookie" },
       type: "OnOff",
@@ -286,16 +289,23 @@ export default {
     },
 
     // ╔═══════════════════════════════════════════════════════════════╗
-    // ║  8. MANAGER BUTTON - Botao gerenciador                        ║
+    // ║  9. FLOAT BUTTON - Botao flutuante (gerenciador)              ║
     // ╚═══════════════════════════════════════════════════════════════╝
     showManager: {
-      label: { en: "Show Manager Button", pt: "Exibir Botao Gerenciador" },
+      label: { en: "Enable Float Button", pt: "Habilitar Botao Flutuante" },
       type: "OnOff",
       defaultValue: true,
       section: "settings",
     },
+    showManagerAfterDecline: {
+      label: { en: "Show Float After Decline", pt: "Exibir Float Apos Recusar" },
+      type: "OnOff",
+      defaultValue: true,
+      section: "settings",
+      hidden: (content) => !content.showManager,
+    },
     managerPosition: {
-      label: { en: "Manager Position", pt: "Posicao do Gerenciador" },
+      label: { en: "Float Position", pt: "Posicao do Float" },
       type: "TextSelect",
       defaultValue: "bottom-left",
       section: "settings",
@@ -309,8 +319,15 @@ export default {
     },
 
     // ╔═══════════════════════════════════════════════════════════════╗
-    // ║  9. EDITOR - Opcoes do editor WeWeb                           ║
+    // ║  10. VISIBILITY CONTROLLER - Controle via binding             ║
     // ╚═══════════════════════════════════════════════════════════════╝
+    isOpen: {
+      label: { en: "Is Open (Controller)", pt: "Esta Aberto (Controlador)" },
+      type: "OnOff",
+      defaultValue: null,
+      bindable: true,
+      section: "settings",
+    },
     showEditorPlaceholder: {
       label: { en: "Show Editor Placeholder", pt: "Exibir Placeholder no Editor" },
       type: "OnOff",
@@ -319,7 +336,7 @@ export default {
     },
 
     // ╔═══════════════════════════════════════════════════════════════╗
-    // ║  10. CONTENT / i18n - Textos customizaveis                    ║
+    // ║  11. CONTENT / i18n - Textos do banner                        ║
     // ╚═══════════════════════════════════════════════════════════════╝
     bannerTitle: {
       label: { en: "Banner Title", pt: "Titulo do Banner" },
@@ -371,7 +388,9 @@ export default {
       bindable: true,
     },
 
-    // Category Labels
+    // ╔═══════════════════════════════════════════════════════════════╗
+    // ║  12. CATEGORY LABELS - Rotulos das categorias                 ║
+    // ╚═══════════════════════════════════════════════════════════════╝
     essentialLabel: {
       label: { en: "Essential Label", pt: "Rotulo Essencial" },
       type: "Text",
@@ -429,9 +448,9 @@ export default {
       bindable: true,
     },
 
-    // ═══════════════════════════════════════════════════════════════
-    // EXPANDABLE LAYOUT LABELS
-    // ═══════════════════════════════════════════════════════════════
+    // ╔═══════════════════════════════════════════════════════════════╗
+    // ║  13. EXPANDABLE LAYOUT - Textos do layout expansivel          ║
+    // ╚═══════════════════════════════════════════════════════════════╝
     expandableHowWeUseLabel: {
       label: { en: "How We Use Cookies Label", pt: "Rotulo Como Usamos Cookies" },
       type: "Text",
@@ -489,9 +508,9 @@ export default {
       hidden: (content) => content.bannerLayout !== 'expandable',
     },
 
-    // ═══════════════════════════════════════════════════════════════
-    // STYLING
-    // ═══════════════════════════════════════════════════════════════
+    // ╔═══════════════════════════════════════════════════════════════╗
+    // ║  STYLING - Cores e aparencia                                  ║
+    // ╚═══════════════════════════════════════════════════════════════╝
     backgroundColor: {
       label: { en: "Background Color", pt: "Cor de Fundo" },
       type: "Color",
