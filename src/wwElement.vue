@@ -219,14 +219,24 @@ export default {
     effectiveContent() {
       const lang = this.content.componentLanguage || 'en-US';
 
-      // If English, return content as-is (defaults are already in English)
-      if (lang === 'en-US') return this.content;
+      // Create copy with category mode mappings
+      const result = { ...this.content };
+
+      // Map *Mode dropdowns to *Enabled and *Required booleans
+      result.analyticsEnabled = this.content.analyticsMode !== 'disabled';
+      result.analyticsRequired = this.content.analyticsMode === 'required';
+      result.marketingEnabled = this.content.marketingMode !== 'disabled';
+      result.marketingRequired = this.content.marketingMode === 'required';
+      result.personalizationEnabled = this.content.personalizationMode !== 'disabled';
+      result.personalizationRequired = this.content.personalizationMode === 'required';
+
+      // If English, return result as-is (defaults are already in English)
+      if (lang === 'en-US') return result;
 
       const translations = TRANSLATIONS[lang];
-      if (!translations) return this.content;
+      if (!translations) return result;
 
-      // Create copy with translations applied for text fields
-      const result = { ...this.content };
+      // Apply translations for text fields
       for (const key of Object.keys(translations)) {
         // Apply translation ONLY if field still has the English default value
         if (this.content[key] === TRANSLATIONS['en-US'][key]) {
@@ -280,13 +290,10 @@ export default {
     emitDefaultStateEvent: true,
     // Bindable output
     lastConsentData: null,
-    // Categories
-    analyticsEnabled: true,
-    analyticsRequired: false,
-    marketingEnabled: true,
-    marketingRequired: false,
-    personalizationEnabled: true,
-    personalizationRequired: false,
+    // Categories (Mode: disabled | optional | required)
+    analyticsMode: 'optional',
+    marketingMode: 'optional',
+    personalizationMode: 'optional',
     // Preferences control
     allowPreferencesModal: true,
     // Content

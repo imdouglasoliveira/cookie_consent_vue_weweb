@@ -85,16 +85,6 @@
           {{ content.declineAllLabel }}
         </button>
 
-        <!-- Accept All - Hidden when coming from float (after decline/close) -->
-        <button
-          v-if="preferencesSource !== 'float'"
-          class="cc-btn cc-btn-secondary"
-          data-cc="allow"
-          @click="$emit('accept-all')"
-        >
-          {{ content.acceptAllLabel }}
-        </button>
-
         <button
           class="cc-btn cc-btn-primary"
           data-cc="submit"

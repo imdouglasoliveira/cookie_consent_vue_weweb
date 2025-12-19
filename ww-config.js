@@ -57,44 +57,38 @@ export default {
     // ╔═══════════════════════════════════════════════════════════════╗
     // ║  2. COOKIE CATEGORIES - Categorias habilitadas                ║
     // ╚═══════════════════════════════════════════════════════════════╝
-    analyticsEnabled: {
+    analyticsMode: {
       label: { en: "Analytics", pt: "Analytics" },
-      type: "OnOff",
-      defaultValue: true,
+      type: "TextSelect",
+      options: [
+        { value: "disabled", label: { en: "Disabled", pt: "Desabilitado" } },
+        { value: "optional", label: { en: "Optional", pt: "Opcional" } },
+        { value: "required", label: { en: "Required", pt: "Obrigatorio" } },
+      ],
+      defaultValue: "optional",
       section: "settings",
     },
-    analyticsRequired: {
-      label: { en: "Analytics Required", pt: "Analytics Obrigatorio" },
-      type: "OnOff",
-      defaultValue: false,
-      section: "settings",
-      hidden: (content) => !content.analyticsEnabled,
-    },
-    marketingEnabled: {
+    marketingMode: {
       label: { en: "Marketing", pt: "Marketing" },
-      type: "OnOff",
-      defaultValue: true,
+      type: "TextSelect",
+      options: [
+        { value: "disabled", label: { en: "Disabled", pt: "Desabilitado" } },
+        { value: "optional", label: { en: "Optional", pt: "Opcional" } },
+        { value: "required", label: { en: "Required", pt: "Obrigatorio" } },
+      ],
+      defaultValue: "optional",
       section: "settings",
     },
-    marketingRequired: {
-      label: { en: "Marketing Required", pt: "Marketing Obrigatorio" },
-      type: "OnOff",
-      defaultValue: false,
-      section: "settings",
-      hidden: (content) => !content.marketingEnabled,
-    },
-    personalizationEnabled: {
+    personalizationMode: {
       label: { en: "Personalization", pt: "Personalizacao" },
-      type: "OnOff",
-      defaultValue: true,
+      type: "TextSelect",
+      options: [
+        { value: "disabled", label: { en: "Disabled", pt: "Desabilitado" } },
+        { value: "optional", label: { en: "Optional", pt: "Opcional" } },
+        { value: "required", label: { en: "Required", pt: "Obrigatorio" } },
+      ],
+      defaultValue: "optional",
       section: "settings",
-    },
-    personalizationRequired: {
-      label: { en: "Personalization Required", pt: "Personalizacao Obrigatorio" },
-      type: "OnOff",
-      defaultValue: false,
-      section: "settings",
-      hidden: (content) => !content.personalizationEnabled,
     },
 
     // ╔═══════════════════════════════════════════════════════════════╗
@@ -285,7 +279,7 @@ export default {
     showCloseButton: {
       label: { en: "Show Close Button (X)", pt: "Exibir Botao Fechar (X)" },
       type: "OnOff",
-      defaultValue: false,
+      defaultValue: true,
       section: "settings",
     },
 

@@ -133,12 +133,9 @@ cookies_vue/
 |-------------|------|--------|-----------|
 | `essentialLabel` | Text | `Essenciais` | Rotulo para cookies essenciais |
 | `essentialDescription` | Text | `...` | Texto de descricao |
-| `analyticsEnabled` | OnOff | `true` | Habilitar categoria analytics |
-| `analyticsRequired` | OnOff | `false` | Tornar categoria analytics obrigatoria |
-| `marketingEnabled` | OnOff | `true` | Habilitar categoria marketing |
-| `marketingRequired` | OnOff | `false` | Tornar categoria marketing obrigatoria |
-| `personalizationEnabled` | OnOff | `true` | Habilitar categoria personalizacao |
-| `personalizationRequired` | OnOff | `false` | Tornar categoria personalizacao obrigatoria |
+| `analyticsMode` | TextSelect | `optional` | Analytics: disabled, optional, required |
+| `marketingMode` | TextSelect | `optional` | Marketing: disabled, optional, required |
+| `personalizationMode` | TextSelect | `optional` | Personalization: disabled, optional, required |
 
 ### Configuracoes PRD-2 (v2.0)
 
