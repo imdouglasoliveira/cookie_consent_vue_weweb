@@ -27,7 +27,7 @@
     <!-- Cookie Banner -->
     <CookieBanner
       v-if="showBannerState"
-      :content="content"
+      :content="effectiveContent"
       :temp-preferences="tempPreferences"
       @accept-all="handleAcceptAll"
       @decline-all="handleDeclineAll"
@@ -39,8 +39,9 @@
     <!-- Preferences Modal -->
     <CookiePreferences
       v-if="showPreferencesState"
-      :content="content"
+      :content="effectiveContent"
       :temp-preferences="tempPreferences"
+      :preferences-source="preferencesSource"
       @close="handleClosePreferences"
       @accept-all="handleAcceptAll"
       @decline-all="handleDeclineAll"
@@ -51,8 +52,8 @@
     <!-- Manager Button -->
     <CookieManager
       v-if="showManagerState"
-      :content="content"
-      @open-preferences="handleOpenPreferences"
+      :content="effectiveContent"
+      @manager-click="handleManagerClick"
     />
   </div>
 </template>
@@ -64,6 +65,42 @@ import CookieManager from './components/CookieManager.vue';
 
 const STORAGE_KEY = 'cookieConsent';
 const COOKIE_NAME = 'cookieConsent';
+
+// Translations for component language selector
+const TRANSLATIONS = {
+  'en-US': {
+    bannerMessage: 'We use cookies to enhance your browsing experience, analyze site traffic, and personalize content.',
+    acceptAllLabel: 'Accept All',
+    declineAllLabel: 'Decline',
+    preferencesLabel: 'Preferences',
+    savePreferencesLabel: 'Save Preferences',
+    policyLinkLabel: 'Privacy Policy',
+    essentialLabel: 'Essential',
+    essentialDescription: 'Required for basic website functionality and security.',
+    analyticsLabel: 'Analytics',
+    analyticsDescription: 'Help us understand how visitors interact with our website.',
+    marketingLabel: 'Marketing',
+    marketingDescription: 'Used to deliver relevant advertisements and track campaign effectiveness.',
+    personalizationLabel: 'Personalization',
+    personalizationDescription: 'Remember your preferences and customize your experience.',
+  },
+  'pt-BR': {
+    bannerMessage: 'Utilizamos cookies para melhorar sua experiência de navegação, analisar o tráfego do site e personalizar o conteúdo.',
+    acceptAllLabel: 'Aceito',
+    declineAllLabel: 'Não aceito',
+    preferencesLabel: 'Preferências',
+    savePreferencesLabel: 'Salvar Preferência',
+    policyLinkLabel: 'Política de Privacidade',
+    essentialLabel: 'Essencial',
+    essentialDescription: 'Necessário para o funcionamento básico e a segurança do site.',
+    analyticsLabel: 'Analytics',
+    analyticsDescription: 'Ajude-nos a entender como os visitantes interagem com nosso site.',
+    marketingLabel: 'Marketing',
+    marketingDescription: 'Utilizado para exibir anúncios relevantes e monitorar a eficácia das campanhas.',
+    personalizationLabel: 'Personalização',
+    personalizationDescription: 'Lembre-se das suas preferências e personalize a sua experiência.',
+  },
+};
 
 export default {
   name: 'CookieConsent',
@@ -82,6 +119,8 @@ export default {
       consentGiven: false,
       // User action tracking: null | 'accepted' | 'declined' | 'closed'
       userAction: null,
+      // Preferences source tracking: 'direct' | 'float' | 'banner'
+      preferencesSource: null,
       tempPreferences: {
         analytics: false,
         marketing: false,
@@ -177,11 +216,41 @@ export default {
         '--cc-shadow': shadowMap[this.content.boxShadow] || shadowMap.lg,
       };
     },
+    effectiveContent() {
+      const lang = this.content.componentLanguage || 'en-US';
+
+      // Create copy with category mode mappings
+      const result = { ...this.content };
+
+      // Map *Mode dropdowns to *Enabled and *Required booleans
+      result.analyticsEnabled = this.content.analyticsMode !== 'disabled';
+      result.analyticsRequired = this.content.analyticsMode === 'required';
+      result.marketingEnabled = this.content.marketingMode !== 'disabled';
+      result.marketingRequired = this.content.marketingMode === 'required';
+      result.personalizationEnabled = this.content.personalizationMode !== 'disabled';
+      result.personalizationRequired = this.content.personalizationMode === 'required';
+
+      // If English, return result as-is (defaults are already in English)
+      if (lang === 'en-US') return result;
+
+      const translations = TRANSLATIONS[lang];
+      if (!translations) return result;
+
+      // Apply translations for text fields
+      for (const key of Object.keys(translations)) {
+        // Apply translation ONLY if field still has the English default value
+        if (this.content[key] === TRANSLATIONS['en-US'][key]) {
+          result[key] = translations[key];
+        }
+      }
+      return result;
+    },
   },
   wwDefaultContent: {
     // Visibility Controller
     isOpen: null,
     // General
+    componentLanguage: 'en-US',
     consentMode: 'opt-in',
     bannerStyle: 'standard',
     position: 'bottom-left',
@@ -190,6 +259,7 @@ export default {
     managerPosition: 'bottom-left',
     cookieExpiration: 365,
     policyPageUrl: '/privacy-policy',
+    policyLinkNewTab: true,
     showEditorPlaceholder: true,
     // Layout
     bannerLayout: 'card',
@@ -220,10 +290,12 @@ export default {
     emitDefaultStateEvent: true,
     // Bindable output
     lastConsentData: null,
-    // Categories
-    analyticsEnabled: true,
-    marketingEnabled: true,
-    personalizationEnabled: true,
+    // Categories (Mode: disabled | optional | required)
+    analyticsMode: 'optional',
+    marketingMode: 'optional',
+    personalizationMode: 'optional',
+    // Preferences control
+    allowPreferencesModal: true,
     // Content
     bannerTitle: 'Cookie Consent',
     bannerMessage: 'We use cookies to enhance your browsing experience, analyze site traffic, and personalize content.',
@@ -903,11 +975,32 @@ export default {
       this.updateMetaPixelConsent(categories);
     },
 
-    handleOpenPreferences() {
+    handleOpenPreferences(source = 'direct') {
+      // Check if preferences modal is allowed
+      if (this.content.allowPreferencesModal === false) {
+        return;
+      }
+      // For minimal style, preferences is not allowed
+      if (this.content.bannerStyle === 'minimal') {
+        return;
+      }
+
+      this.preferencesSource = source;
       this.showPreferencesState = true;
       this.showBannerState = false;
 
-      this.$emit('trigger-event', { name: 'preferencesOpened', event: {} });
+      this.$emit('trigger-event', { name: 'preferencesOpened', event: { source } });
+    },
+
+    handleManagerClick() {
+      // For minimal style or when preferences not allowed: just show banner again
+      if (this.content.bannerStyle === 'minimal' || this.content.allowPreferencesModal === false) {
+        this.showBannerState = true;
+        this.$emit('trigger-event', { name: 'bannerShown', event: { source: 'manager' } });
+        return;
+      }
+      // For other styles: open preferences normally (from float)
+      this.handleOpenPreferences('float');
     },
 
     handleCloseBanner() {
@@ -937,12 +1030,19 @@ export default {
     },
 
     handleSavePreferences() {
-      const consentData = this.saveConsent(this.tempPreferences, 'savePreferences', 'preferences');
+      // Apply required categories (always true if required)
+      const effectivePreferences = {
+        analytics: this.content.analyticsRequired || this.tempPreferences.analytics,
+        marketing: this.content.marketingRequired || this.tempPreferences.marketing,
+        personalization: this.content.personalizationRequired || this.tempPreferences.personalization,
+      };
+
+      const consentData = this.saveConsent(effectivePreferences, 'savePreferences', 'preferences');
       this.consentGiven = true;
       // Determine if user accepted any category or declined all
-      const acceptedAny = this.tempPreferences.analytics ||
-                         this.tempPreferences.marketing ||
-                         this.tempPreferences.personalization;
+      const acceptedAny = effectivePreferences.analytics ||
+                         effectivePreferences.marketing ||
+                         effectivePreferences.personalization;
       this.userAction = acceptedAny ? 'accepted' : 'declined';
       this.showPreferencesState = false;
       this.showBannerState = false;

@@ -3,8 +3,8 @@
     <div class="cc-category-header">
       <div class="cc-category-info">
         <span class="cc-category-label">{{ label }}</span>
-        <span v-if="requiredLabel && disabled" class="cc-category-required">
-          {{ requiredLabel }}
+        <span v-if="(requiredLabel || required) && disabled" class="cc-category-required">
+          {{ requiredLabel || 'REQUIRED' }}
         </span>
       </div>
       <label class="cc-toggle" :class="{ 'cc-toggle-disabled': disabled }">
@@ -32,6 +32,7 @@ export default {
     checked: { type: Boolean, default: false },
     disabled: { type: Boolean, default: false },
     requiredLabel: { type: String, default: '' },
+    required: { type: Boolean, default: false },
     compact: { type: Boolean, default: false },
   },
   emits: ['change'],

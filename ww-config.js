@@ -11,6 +11,18 @@ export default {
     // ╔═══════════════════════════════════════════════════════════════╗
     // ║  1. CONSENT BEHAVIOR - Modo e regras de consentimento         ║
     // ╚═══════════════════════════════════════════════════════════════╝
+    componentLanguage: {
+      label: { en: "Component Language", pt: "Idioma do Componente" },
+      type: "TextSelect",
+      defaultValue: "en-US",
+      section: "settings",
+      options: {
+        options: [
+          { value: "en-US", label: { en: "English (US)", pt: "Ingles (EUA)" } },
+          { value: "pt-BR", label: { en: "Portuguese (BR)", pt: "Portugues (BR)" } },
+        ],
+      },
+    },
     consentMode: {
       label: { en: "Consent Mode", pt: "Modo de Consentimento" },
       type: "TextSelect",
@@ -45,23 +57,44 @@ export default {
     // ╔═══════════════════════════════════════════════════════════════╗
     // ║  2. COOKIE CATEGORIES - Categorias habilitadas                ║
     // ╚═══════════════════════════════════════════════════════════════╝
-    analyticsEnabled: {
+    analyticsMode: {
       label: { en: "Analytics", pt: "Analytics" },
-      type: "OnOff",
-      defaultValue: true,
+      type: "TextSelect",
+      defaultValue: "optional",
       section: "settings",
+      options: {
+        options: [
+          { value: "disabled", label: { en: "Disabled", pt: "Desabilitado" } },
+          { value: "optional", label: { en: "Optional", pt: "Opcional" } },
+          { value: "required", label: { en: "Required", pt: "Obrigatorio" } },
+        ],
+      },
     },
-    marketingEnabled: {
+    marketingMode: {
       label: { en: "Marketing", pt: "Marketing" },
-      type: "OnOff",
-      defaultValue: true,
+      type: "TextSelect",
+      defaultValue: "optional",
       section: "settings",
+      options: {
+        options: [
+          { value: "disabled", label: { en: "Disabled", pt: "Desabilitado" } },
+          { value: "optional", label: { en: "Optional", pt: "Opcional" } },
+          { value: "required", label: { en: "Required", pt: "Obrigatorio" } },
+        ],
+      },
     },
-    personalizationEnabled: {
+    personalizationMode: {
       label: { en: "Personalization", pt: "Personalizacao" },
-      type: "OnOff",
-      defaultValue: true,
+      type: "TextSelect",
+      defaultValue: "optional",
       section: "settings",
+      options: {
+        options: [
+          { value: "disabled", label: { en: "Disabled", pt: "Desabilitado" } },
+          { value: "optional", label: { en: "Optional", pt: "Opcional" } },
+          { value: "required", label: { en: "Required", pt: "Obrigatorio" } },
+        ],
+      },
     },
 
     // ╔═══════════════════════════════════════════════════════════════╗
@@ -242,10 +275,17 @@ export default {
       defaultValue: true,
       section: "settings",
     },
+    allowPreferencesModal: {
+      label: { en: "Allow Preferences Modal", pt: "Permitir Modal de Preferencias" },
+      type: "OnOff",
+      defaultValue: true,
+      section: "settings",
+      hidden: (content) => content.bannerStyle === 'minimal',
+    },
     showCloseButton: {
       label: { en: "Show Close Button (X)", pt: "Exibir Botao Fechar (X)" },
       type: "OnOff",
-      defaultValue: false,
+      defaultValue: true,
       section: "settings",
     },
 
@@ -285,6 +325,13 @@ export default {
       defaultValue: "/privacy-policy",
       section: "settings",
       bindable: true,
+      hidden: (content) => !content.showPolicyLink,
+    },
+    policyLinkNewTab: {
+      label: { en: "Open Policy in New Tab", pt: "Abrir Politica em Nova Aba" },
+      type: "OnOff",
+      defaultValue: true,
+      section: "settings",
       hidden: (content) => !content.showPolicyLink,
     },
 

@@ -52,6 +52,18 @@ npm run build
 - [x] **Configurable after decline**: Control whether float shows after user declines all cookies
 - [x] **Bot/Crawler detection**: Auto-consent for search engine bots (Googlebot, Bingbot, etc.)
 
+### New Features (v2.2)
+- [x] **Language selector**: Switch component language between English (US) and Portuguese (BR)
+- [x] **Built-in translations**: Pre-defined translations for all labels (preserves customizations)
+- [x] **Privacy link target**: Configure whether privacy policy link opens in new tab or same tab
+- [x] **Centered button text**: Button text is always centered for consistent appearance
+
+### Preferences & Categories (v2.3)
+- [x] **Preferences modal control**: Enable/disable the preferences modal via `allowPreferencesModal`
+- [x] **Required categories**: Make any category mandatory (Analytics, Marketing, Personalization)
+- [x] **Minimal style behavior**: Float button re-shows banner instead of opening preferences
+- [x] **Smart button display**: "Accept All" button hidden when coming from float (after decline/close)
+
 ### Consent Modes
 - [x] **Opt-in** (GDPR default): All non-essential cookies blocked until explicit consent
 - [x] **Opt-out**: Cookies enabled by default, user can refuse
@@ -104,12 +116,15 @@ cookies_vue/
 
 | Property | Type | Default | Description |
 |----------|------|---------|-------------|
+| `componentLanguage` | TextSelect | `en-US` | Component language: en-US, pt-BR |
 | `consentMode` | TextSelect | `opt-in` | Consent mode: opt-in, opt-out, informational |
 | `bannerStyle` | TextSelect | `standard` | Visual style: minimal, standard, detailed |
 | `position` | TextSelect | `bottom-left` | Banner position on screen |
 | `showManager` | OnOff | `true` | Show persistent manager button |
 | `cookieExpiration` | Number | `365` | Days until consent expires |
 | `policyPageUrl` | Text | `""` | URL to privacy policy page |
+| `policyLinkNewTab` | OnOff | `true` | Open privacy policy link in new tab |
+| `allowPreferencesModal` | OnOff | `true` | Allow preferences modal to be opened |
 
 ### Cookie Categories
 
@@ -117,9 +132,9 @@ cookies_vue/
 |----------|------|---------|-------------|
 | `essentialLabel` | Text | `Essential` | Label for essential cookies |
 | `essentialDescription` | Text | `...` | Description text |
-| `analyticsEnabled` | OnOff | `true` | Enable analytics category |
-| `marketingEnabled` | OnOff | `true` | Enable marketing category |
-| `personalizationEnabled` | OnOff | `true` | Enable personalization category |
+| `analyticsMode` | TextSelect | `optional` | Analytics: disabled, optional, required |
+| `marketingMode` | TextSelect | `optional` | Marketing: disabled, optional, required |
+| `personalizationMode` | TextSelect | `optional` | Personalization: disabled, optional, required |
 
 ### PRD-2 Settings (v2.0)
 
@@ -333,6 +348,20 @@ Mark scripts with the `data-cc-category` attribute to control execution:
   // This script only runs if analytics consent is given
 </script>
 ```
+
+### Reusing Component Across Multiple Pages (Multi-page Sections)
+
+WeWeb custom components don't automatically persist configuration across pages. To reuse the same configured component on multiple pages:
+
+1. **Configure the component** on the first page (properties, bindings, workflows)
+2. **Rename the Section** containing the component (e.g., `CookieConsent - Main`)
+3. On another page, go to **Add → Multi-page sections → Pages → [source page]**
+4. **Drag the Section** to the destination page
+5. When prompted, choose **Create an instance** (not "Create a copy")
+
+Now the component shares the same configuration across all pages. Changes to one instance update all others.
+
+> **Tip:** Use "Create a copy" only if you need an independent variation on a specific page.
 
 ## Browser Support
 

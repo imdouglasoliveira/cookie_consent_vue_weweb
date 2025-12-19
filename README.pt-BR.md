@@ -52,6 +52,18 @@ npm run build
 - [x] **Configuravel apos recusa**: Controle se o float aparece apos usuario recusar todos os cookies
 - [x] **Deteccao de Bots/Crawlers**: Auto-consentimento para bots de busca (Googlebot, Bingbot, etc.)
 
+### Novas Funcionalidades (v2.2)
+- [x] **Seletor de idioma**: Alterne o idioma do componente entre Ingles (EUA) e Portugues (BR)
+- [x] **Traducoes integradas**: Traducoes pre-definidas para todos os rotulos (preserva customizacoes)
+- [x] **Alvo do link de privacidade**: Configure se o link de politica de privacidade abre em nova aba ou mesma aba
+- [x] **Texto centralizado nos botoes**: Texto dos botoes sempre centralizado para aparencia consistente
+
+### Preferencias e Categorias (v2.3)
+- [x] **Controle do modal de preferencias**: Habilita/desabilita o modal de preferencias via `allowPreferencesModal`
+- [x] **Categorias obrigatorias**: Torne qualquer categoria obrigatoria (Analytics, Marketing, Personalizacao)
+- [x] **Comportamento estilo minimal**: Botao flutuante reexibe o banner ao inves de abrir preferencias
+- [x] **Exibicao inteligente de botoes**: Botao "Aceitar Todos" oculto quando vindo do float (apos recusa/fechar)
+
 ### Modos de Consentimento
 - [x] **Opt-in** (padrao LGPD/GDPR): Todos os cookies nao-essenciais bloqueados ate consentimento explicito
 - [x] **Opt-out**: Cookies habilitados por padrao, usuario pode recusar
@@ -105,12 +117,15 @@ cookies_vue/
 
 | Propriedade | Tipo | Padrao | Descricao |
 |-------------|------|--------|-----------|
+| `componentLanguage` | TextSelect | `en-US` | Idioma do componente: en-US, pt-BR |
 | `consentMode` | TextSelect | `opt-in` | Modo de consentimento: opt-in, opt-out, informational |
 | `bannerStyle` | TextSelect | `standard` | Estilo visual: minimal, standard, detailed |
 | `position` | TextSelect | `bottom-left` | Posicao do banner na tela |
 | `showManager` | OnOff | `true` | Mostrar botao gerenciador persistente |
 | `cookieExpiration` | Number | `365` | Dias ate o consentimento expirar |
 | `policyPageUrl` | Text | `""` | URL para pagina de politica de privacidade |
+| `policyLinkNewTab` | OnOff | `true` | Abrir link de politica de privacidade em nova aba |
+| `allowPreferencesModal` | OnOff | `true` | Permitir abertura do modal de preferencias |
 
 ### Categorias de Cookies
 
@@ -118,9 +133,9 @@ cookies_vue/
 |-------------|------|--------|-----------|
 | `essentialLabel` | Text | `Essenciais` | Rotulo para cookies essenciais |
 | `essentialDescription` | Text | `...` | Texto de descricao |
-| `analyticsEnabled` | OnOff | `true` | Habilitar categoria analytics |
-| `marketingEnabled` | OnOff | `true` | Habilitar categoria marketing |
-| `personalizationEnabled` | OnOff | `true` | Habilitar categoria personalizacao |
+| `analyticsMode` | TextSelect | `optional` | Analytics: disabled, optional, required |
+| `marketingMode` | TextSelect | `optional` | Marketing: disabled, optional, required |
+| `personalizationMode` | TextSelect | `optional` | Personalization: disabled, optional, required |
 
 ### Configuracoes PRD-2 (v2.0)
 
@@ -334,6 +349,20 @@ Marque scripts com o atributo `data-cc-category` para controlar execucao:
   // Este script so executa se consentimento de analytics for dado
 </script>
 ```
+
+### Reutilizando o Componente em Varias Paginas (Multi-page Sections)
+
+Componentes customizados do WeWeb nao persistem configuracoes automaticamente entre paginas. Para reutilizar o mesmo componente configurado em varias paginas:
+
+1. **Configure o componente** na primeira pagina (propriedades, bindings, workflows)
+2. **Renomeie a Section** que contem o componente (ex.: `CookieConsent - Main`)
+3. Em outra pagina, va em **Add → Multi-page sections → Pages → [pagina origem]**
+4. **Arraste a Section** para a pagina de destino
+5. Quando perguntado, escolha **Create an instance** (nao "Create a copy")
+
+Agora o componente compartilha a mesma configuracao em todas as paginas. Alteracoes em uma instancia atualizam todas as outras.
+
+> **Dica:** Use "Create a copy" apenas se precisar de uma variacao independente em uma pagina especifica.
 
 ## Suporte de Navegadores
 
