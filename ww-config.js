@@ -60,35 +60,41 @@ export default {
     analyticsMode: {
       label: { en: "Analytics", pt: "Analytics" },
       type: "TextSelect",
-      options: [
-        { value: "disabled", label: { en: "Disabled", pt: "Desabilitado" } },
-        { value: "optional", label: { en: "Optional", pt: "Opcional" } },
-        { value: "required", label: { en: "Required", pt: "Obrigatorio" } },
-      ],
       defaultValue: "optional",
       section: "settings",
+      options: {
+        options: [
+          { value: "disabled", label: { en: "Disabled", pt: "Desabilitado" } },
+          { value: "optional", label: { en: "Optional", pt: "Opcional" } },
+          { value: "required", label: { en: "Required", pt: "Obrigatorio" } },
+        ],
+      },
     },
     marketingMode: {
       label: { en: "Marketing", pt: "Marketing" },
       type: "TextSelect",
-      options: [
-        { value: "disabled", label: { en: "Disabled", pt: "Desabilitado" } },
-        { value: "optional", label: { en: "Optional", pt: "Opcional" } },
-        { value: "required", label: { en: "Required", pt: "Obrigatorio" } },
-      ],
       defaultValue: "optional",
       section: "settings",
+      options: {
+        options: [
+          { value: "disabled", label: { en: "Disabled", pt: "Desabilitado" } },
+          { value: "optional", label: { en: "Optional", pt: "Opcional" } },
+          { value: "required", label: { en: "Required", pt: "Obrigatorio" } },
+        ],
+      },
     },
     personalizationMode: {
       label: { en: "Personalization", pt: "Personalizacao" },
       type: "TextSelect",
-      options: [
-        { value: "disabled", label: { en: "Disabled", pt: "Desabilitado" } },
-        { value: "optional", label: { en: "Optional", pt: "Opcional" } },
-        { value: "required", label: { en: "Required", pt: "Obrigatorio" } },
-      ],
       defaultValue: "optional",
       section: "settings",
+      options: {
+        options: [
+          { value: "disabled", label: { en: "Disabled", pt: "Desabilitado" } },
+          { value: "optional", label: { en: "Optional", pt: "Opcional" } },
+          { value: "required", label: { en: "Required", pt: "Obrigatorio" } },
+        ],
+      },
     },
 
     // ╔═══════════════════════════════════════════════════════════════╗
