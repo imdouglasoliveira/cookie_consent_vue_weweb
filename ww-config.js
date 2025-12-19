@@ -63,17 +63,38 @@ export default {
       defaultValue: true,
       section: "settings",
     },
+    analyticsRequired: {
+      label: { en: "Analytics Required", pt: "Analytics Obrigatorio" },
+      type: "OnOff",
+      defaultValue: false,
+      section: "settings",
+      hidden: (content) => !content.analyticsEnabled,
+    },
     marketingEnabled: {
       label: { en: "Marketing", pt: "Marketing" },
       type: "OnOff",
       defaultValue: true,
       section: "settings",
     },
+    marketingRequired: {
+      label: { en: "Marketing Required", pt: "Marketing Obrigatorio" },
+      type: "OnOff",
+      defaultValue: false,
+      section: "settings",
+      hidden: (content) => !content.marketingEnabled,
+    },
     personalizationEnabled: {
       label: { en: "Personalization", pt: "Personalizacao" },
       type: "OnOff",
       defaultValue: true,
       section: "settings",
+    },
+    personalizationRequired: {
+      label: { en: "Personalization Required", pt: "Personalizacao Obrigatorio" },
+      type: "OnOff",
+      defaultValue: false,
+      section: "settings",
+      hidden: (content) => !content.personalizationEnabled,
     },
 
     // ╔═══════════════════════════════════════════════════════════════╗
@@ -253,6 +274,13 @@ export default {
       type: "OnOff",
       defaultValue: true,
       section: "settings",
+    },
+    allowPreferencesModal: {
+      label: { en: "Allow Preferences Modal", pt: "Permitir Modal de Preferencias" },
+      type: "OnOff",
+      defaultValue: true,
+      section: "settings",
+      hidden: (content) => content.bannerStyle === 'minimal',
     },
     showCloseButton: {
       label: { en: "Show Close Button (X)", pt: "Exibir Botao Fechar (X)" },

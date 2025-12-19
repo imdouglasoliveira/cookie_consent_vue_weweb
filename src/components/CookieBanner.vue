@@ -81,28 +81,31 @@
             v-if="content.analyticsEnabled"
             :label="content.analyticsLabel"
             :description="content.analyticsDescription"
-            :checked="tempPreferences.analytics"
-            :disabled="false"
+            :checked="content.analyticsRequired || tempPreferences.analytics"
+            :disabled="content.analyticsRequired"
+            :required="content.analyticsRequired"
             compact
-            @change="(val) => $emit('update-preference', 'analytics', val)"
+            @change="(val) => !content.analyticsRequired && $emit('update-preference', 'analytics', val)"
           />
           <CategoryToggle
             v-if="content.marketingEnabled"
             :label="content.marketingLabel"
             :description="content.marketingDescription"
-            :checked="tempPreferences.marketing"
-            :disabled="false"
+            :checked="content.marketingRequired || tempPreferences.marketing"
+            :disabled="content.marketingRequired"
+            :required="content.marketingRequired"
             compact
-            @change="(val) => $emit('update-preference', 'marketing', val)"
+            @change="(val) => !content.marketingRequired && $emit('update-preference', 'marketing', val)"
           />
           <CategoryToggle
             v-if="content.personalizationEnabled"
             :label="content.personalizationLabel"
             :description="content.personalizationDescription"
-            :checked="tempPreferences.personalization"
-            :disabled="false"
+            :checked="content.personalizationRequired || tempPreferences.personalization"
+            :disabled="content.personalizationRequired"
+            :required="content.personalizationRequired"
             compact
-            @change="(val) => $emit('update-preference', 'personalization', val)"
+            @change="(val) => !content.personalizationRequired && $emit('update-preference', 'personalization', val)"
           />
         </div>
 

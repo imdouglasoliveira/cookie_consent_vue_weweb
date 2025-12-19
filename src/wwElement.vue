@@ -41,6 +41,7 @@
       v-if="showPreferencesState"
       :content="effectiveContent"
       :temp-preferences="tempPreferences"
+      :preferences-source="preferencesSource"
       @close="handleClosePreferences"
       @accept-all="handleAcceptAll"
       @decline-all="handleDeclineAll"
@@ -52,7 +53,7 @@
     <CookieManager
       v-if="showManagerState"
       :content="effectiveContent"
-      @open-preferences="handleOpenPreferences"
+      @manager-click="handleManagerClick"
     />
   </div>
 </template>
@@ -118,6 +119,8 @@ export default {
       consentGiven: false,
       // User action tracking: null | 'accepted' | 'declined' | 'closed'
       userAction: null,
+      // Preferences source tracking: 'direct' | 'float' | 'banner'
+      preferencesSource: null,
       tempPreferences: {
         analytics: false,
         marketing: false,
@@ -279,8 +282,13 @@ export default {
     lastConsentData: null,
     // Categories
     analyticsEnabled: true,
+    analyticsRequired: false,
     marketingEnabled: true,
+    marketingRequired: false,
     personalizationEnabled: true,
+    personalizationRequired: false,
+    // Preferences control
+    allowPreferencesModal: true,
     // Content
     bannerTitle: 'Cookie Consent',
     bannerMessage: 'We use cookies to enhance your browsing experience, analyze site traffic, and personalize content.',
@@ -960,11 +968,32 @@ export default {
       this.updateMetaPixelConsent(categories);
     },
 
-    handleOpenPreferences() {
+    handleOpenPreferences(source = 'direct') {
+      // Check if preferences modal is allowed
+      if (this.content.allowPreferencesModal === false) {
+        return;
+      }
+      // For minimal style, preferences is not allowed
+      if (this.content.bannerStyle === 'minimal') {
+        return;
+      }
+
+      this.preferencesSource = source;
       this.showPreferencesState = true;
       this.showBannerState = false;
 
-      this.$emit('trigger-event', { name: 'preferencesOpened', event: {} });
+      this.$emit('trigger-event', { name: 'preferencesOpened', event: { source } });
+    },
+
+    handleManagerClick() {
+      // For minimal style or when preferences not allowed: just show banner again
+      if (this.content.bannerStyle === 'minimal' || this.content.allowPreferencesModal === false) {
+        this.showBannerState = true;
+        this.$emit('trigger-event', { name: 'bannerShown', event: { source: 'manager' } });
+        return;
+      }
+      // For other styles: open preferences normally (from float)
+      this.handleOpenPreferences('float');
     },
 
     handleCloseBanner() {
@@ -994,12 +1023,19 @@ export default {
     },
 
     handleSavePreferences() {
-      const consentData = this.saveConsent(this.tempPreferences, 'savePreferences', 'preferences');
+      // Apply required categories (always true if required)
+      const effectivePreferences = {
+        analytics: this.content.analyticsRequired || this.tempPreferences.analytics,
+        marketing: this.content.marketingRequired || this.tempPreferences.marketing,
+        personalization: this.content.personalizationRequired || this.tempPreferences.personalization,
+      };
+
+      const consentData = this.saveConsent(effectivePreferences, 'savePreferences', 'preferences');
       this.consentGiven = true;
       // Determine if user accepted any category or declined all
-      const acceptedAny = this.tempPreferences.analytics ||
-                         this.tempPreferences.marketing ||
-                         this.tempPreferences.personalization;
+      const acceptedAny = effectivePreferences.analytics ||
+                         effectivePreferences.marketing ||
+                         effectivePreferences.personalization;
       this.userAction = acceptedAny ? 'accepted' : 'declined';
       this.showPreferencesState = false;
       this.showBannerState = false;

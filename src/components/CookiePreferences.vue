@@ -43,10 +43,11 @@
           v-if="content.analyticsEnabled"
           :label="content.analyticsLabel"
           :description="content.analyticsDescription"
-          :checked="tempPreferences.analytics"
-          :disabled="false"
+          :checked="content.analyticsRequired || tempPreferences.analytics"
+          :disabled="content.analyticsRequired"
+          :required="content.analyticsRequired"
           data-cc-checkbox="analytics"
-          @change="(val) => $emit('update-preference', 'analytics', val)"
+          @change="(val) => !content.analyticsRequired && $emit('update-preference', 'analytics', val)"
         />
 
         <!-- Marketing -->
@@ -54,10 +55,11 @@
           v-if="content.marketingEnabled"
           :label="content.marketingLabel"
           :description="content.marketingDescription"
-          :checked="tempPreferences.marketing"
-          :disabled="false"
+          :checked="content.marketingRequired || tempPreferences.marketing"
+          :disabled="content.marketingRequired"
+          :required="content.marketingRequired"
           data-cc-checkbox="marketing"
-          @change="(val) => $emit('update-preference', 'marketing', val)"
+          @change="(val) => !content.marketingRequired && $emit('update-preference', 'marketing', val)"
         />
 
         <!-- Personalization -->
@@ -65,10 +67,11 @@
           v-if="content.personalizationEnabled"
           :label="content.personalizationLabel"
           :description="content.personalizationDescription"
-          :checked="tempPreferences.personalization"
-          :disabled="false"
+          :checked="content.personalizationRequired || tempPreferences.personalization"
+          :disabled="content.personalizationRequired"
+          :required="content.personalizationRequired"
           data-cc-checkbox="personalization"
-          @change="(val) => $emit('update-preference', 'personalization', val)"
+          @change="(val) => !content.personalizationRequired && $emit('update-preference', 'personalization', val)"
         />
       </div>
 
@@ -82,7 +85,9 @@
           {{ content.declineAllLabel }}
         </button>
 
+        <!-- Accept All - Hidden when coming from float (after decline/close) -->
         <button
+          v-if="preferencesSource !== 'float'"
           class="cc-btn cc-btn-secondary"
           data-cc="allow"
           @click="$emit('accept-all')"
@@ -125,6 +130,7 @@ export default {
   props: {
     content: { type: Object, required: true },
     tempPreferences: { type: Object, required: true },
+    preferencesSource: { type: String, default: 'direct' },
   },
   emits: ['close', 'accept-all', 'decline-all', 'save', 'update-preference'],
   mounted() {

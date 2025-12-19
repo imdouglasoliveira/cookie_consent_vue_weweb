@@ -58,6 +58,12 @@ npm run build
 - [x] **Privacy link target**: Configure whether privacy policy link opens in new tab or same tab
 - [x] **Centered button text**: Button text is always centered for consistent appearance
 
+### Preferences & Categories (v2.3)
+- [x] **Preferences modal control**: Enable/disable the preferences modal via `allowPreferencesModal`
+- [x] **Required categories**: Make any category mandatory (Analytics, Marketing, Personalization)
+- [x] **Minimal style behavior**: Float button re-shows banner instead of opening preferences
+- [x] **Smart button display**: "Accept All" button hidden when coming from float (after decline/close)
+
 ### Consent Modes
 - [x] **Opt-in** (GDPR default): All non-essential cookies blocked until explicit consent
 - [x] **Opt-out**: Cookies enabled by default, user can refuse
@@ -118,6 +124,7 @@ cookies_vue/
 | `cookieExpiration` | Number | `365` | Days until consent expires |
 | `policyPageUrl` | Text | `""` | URL to privacy policy page |
 | `policyLinkNewTab` | OnOff | `true` | Open privacy policy link in new tab |
+| `allowPreferencesModal` | OnOff | `true` | Allow preferences modal to be opened |
 
 ### Cookie Categories
 
@@ -126,8 +133,11 @@ cookies_vue/
 | `essentialLabel` | Text | `Essential` | Label for essential cookies |
 | `essentialDescription` | Text | `...` | Description text |
 | `analyticsEnabled` | OnOff | `true` | Enable analytics category |
+| `analyticsRequired` | OnOff | `false` | Make analytics category mandatory |
 | `marketingEnabled` | OnOff | `true` | Enable marketing category |
+| `marketingRequired` | OnOff | `false` | Make marketing category mandatory |
 | `personalizationEnabled` | OnOff | `true` | Enable personalization category |
+| `personalizationRequired` | OnOff | `false` | Make personalization category mandatory |
 
 ### PRD-2 Settings (v2.0)
 

@@ -5,7 +5,7 @@
       data-cc="manager"
       data-cc-action="open-preferences"
       :title="content.preferencesLabel"
-      @click="$emit('open-preferences')"
+      @click="$emit('manager-click')"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -35,7 +35,7 @@ export default {
   props: {
     content: { type: Object, required: true },
   },
-  emits: ['open-preferences'],
+  emits: ['manager-click'],
   computed: {
     positionClass() {
       return `cc-manager-${this.content.managerPosition || 'bottom-left'}`;

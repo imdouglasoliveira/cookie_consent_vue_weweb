@@ -58,6 +58,12 @@ npm run build
 - [x] **Alvo do link de privacidade**: Configure se o link de politica de privacidade abre em nova aba ou mesma aba
 - [x] **Texto centralizado nos botoes**: Texto dos botoes sempre centralizado para aparencia consistente
 
+### Preferencias e Categorias (v2.3)
+- [x] **Controle do modal de preferencias**: Habilita/desabilita o modal de preferencias via `allowPreferencesModal`
+- [x] **Categorias obrigatorias**: Torne qualquer categoria obrigatoria (Analytics, Marketing, Personalizacao)
+- [x] **Comportamento estilo minimal**: Botao flutuante reexibe o banner ao inves de abrir preferencias
+- [x] **Exibicao inteligente de botoes**: Botao "Aceitar Todos" oculto quando vindo do float (apos recusa/fechar)
+
 ### Modos de Consentimento
 - [x] **Opt-in** (padrao LGPD/GDPR): Todos os cookies nao-essenciais bloqueados ate consentimento explicito
 - [x] **Opt-out**: Cookies habilitados por padrao, usuario pode recusar
@@ -119,6 +125,7 @@ cookies_vue/
 | `cookieExpiration` | Number | `365` | Dias ate o consentimento expirar |
 | `policyPageUrl` | Text | `""` | URL para pagina de politica de privacidade |
 | `policyLinkNewTab` | OnOff | `true` | Abrir link de politica de privacidade em nova aba |
+| `allowPreferencesModal` | OnOff | `true` | Permitir abertura do modal de preferencias |
 
 ### Categorias de Cookies
 
@@ -127,8 +134,11 @@ cookies_vue/
 | `essentialLabel` | Text | `Essenciais` | Rotulo para cookies essenciais |
 | `essentialDescription` | Text | `...` | Texto de descricao |
 | `analyticsEnabled` | OnOff | `true` | Habilitar categoria analytics |
+| `analyticsRequired` | OnOff | `false` | Tornar categoria analytics obrigatoria |
 | `marketingEnabled` | OnOff | `true` | Habilitar categoria marketing |
+| `marketingRequired` | OnOff | `false` | Tornar categoria marketing obrigatoria |
 | `personalizationEnabled` | OnOff | `true` | Habilitar categoria personalizacao |
+| `personalizationRequired` | OnOff | `false` | Tornar categoria personalizacao obrigatoria |
 
 ### Configuracoes PRD-2 (v2.0)
 
