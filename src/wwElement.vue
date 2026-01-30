@@ -214,6 +214,7 @@ export default {
         '--cc-link': this.content.linkColor,
         '--cc-radius': this.content.borderRadius,
         '--cc-shadow': shadowMap[this.content.boxShadow] || shadowMap.lg,
+        '--cc-zindex': this.content.zIndex || 9999,
       };
     },
     effectiveContent() {
@@ -337,6 +338,8 @@ export default {
     borderRadius: '12px',
     boxShadow: 'lg',
     bannerShape: 'rounded',
+    // Z-Index (to overlay other components)
+    zIndex: 9999,
   },
   watch: {
     'content.isOpen': {

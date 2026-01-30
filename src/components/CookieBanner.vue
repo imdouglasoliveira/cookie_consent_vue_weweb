@@ -271,7 +271,7 @@ export default {
 <style lang="scss" scoped>
 .cc-banner-container {
   position: fixed;
-  z-index: 9999;
+  z-index: var(--cc-zindex, 9999);
   padding: 16px;
   pointer-events: none;
 
@@ -445,7 +445,7 @@ export default {
   &.cc-layout-modal {
     .cc-banner {
       position: relative;
-      z-index: 10001;
+      z-index: calc(var(--cc-zindex, 9999) + 2);
     }
   }
 
@@ -937,7 +937,7 @@ export default {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.5);
-  z-index: 10000;
+  z-index: calc(var(--cc-zindex, 9999) + 1);
   pointer-events: auto;
   animation: cc-fade-in 0.2s ease-out;
 }
