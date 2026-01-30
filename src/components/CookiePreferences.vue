@@ -148,7 +148,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: calc(var(--cc-zindex, 9999) + 1);
+  z-index: calc(var(--cc-zindex, 9999) + 1) !important;
   padding: 16px;
   animation: cc-fade-in 0.2s ease-out;
 }
