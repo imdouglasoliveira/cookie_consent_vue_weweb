@@ -47,7 +47,7 @@ export default {
 <style lang="scss" scoped>
 .cc-manager-container {
   position: fixed;
-  z-index: 9998;
+  z-index: calc(var(--cc-zindex, 9999) - 1);
   padding: 16px;
 
   &.cc-manager-bottom-left {
