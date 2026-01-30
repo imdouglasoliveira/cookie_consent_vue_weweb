@@ -23,39 +23,45 @@
       <span>Cookie Consent</span>
       <small>Configure actions in workflows</small>
     </div>
+  </div>
 
+  <!-- Teleport fixed-position components to body to escape stacking context -->
+  <teleport to="body" v-if="shouldRenderComponent">
     <!-- Cookie Banner -->
-    <CookieBanner
-      v-if="showBannerState"
-      :content="effectiveContent"
-      :temp-preferences="tempPreferences"
-      @accept-all="handleAcceptAll"
-      @decline-all="handleDeclineAll"
-      @open-preferences="handleOpenPreferences"
-      @update-preference="handleUpdatePreference"
-      @close="handleCloseBanner"
-    />
+    <div v-if="showBannerState" class="cc-teleport-wrapper" :style="cssVars">
+      <CookieBanner
+        :content="effectiveContent"
+        :temp-preferences="tempPreferences"
+        @accept-all="handleAcceptAll"
+        @decline-all="handleDeclineAll"
+        @open-preferences="handleOpenPreferences"
+        @update-preference="handleUpdatePreference"
+        @close="handleCloseBanner"
+      />
+    </div>
 
     <!-- Preferences Modal -->
-    <CookiePreferences
-      v-if="showPreferencesState"
-      :content="effectiveContent"
-      :temp-preferences="tempPreferences"
-      :preferences-source="preferencesSource"
-      @close="handleClosePreferences"
-      @accept-all="handleAcceptAll"
-      @decline-all="handleDeclineAll"
-      @save="handleSavePreferences"
-      @update-preference="handleUpdatePreference"
-    />
+    <div v-if="showPreferencesState" class="cc-teleport-wrapper" :style="cssVars">
+      <CookiePreferences
+        :content="effectiveContent"
+        :temp-preferences="tempPreferences"
+        :preferences-source="preferencesSource"
+        @close="handleClosePreferences"
+        @accept-all="handleAcceptAll"
+        @decline-all="handleDeclineAll"
+        @save="handleSavePreferences"
+        @update-preference="handleUpdatePreference"
+      />
+    </div>
 
     <!-- Manager Button -->
-    <CookieManager
-      v-if="showManagerState"
-      :content="effectiveContent"
-      @manager-click="handleManagerClick"
-    />
-  </div>
+    <div v-if="showManagerState" class="cc-teleport-wrapper" :style="cssVars">
+      <CookieManager
+        :content="effectiveContent"
+        @manager-click="handleManagerClick"
+      />
+    </div>
+  </teleport>
 </template>
 
 <script>
@@ -1353,5 +1359,12 @@ export default {
     color: #9ca3af;
     text-align: center;
   }
+}
+</style>
+
+<!-- Non-scoped styles for teleported content -->
+<style lang="scss">
+.cc-teleport-wrapper {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
 </style>
