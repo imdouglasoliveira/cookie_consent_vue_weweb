@@ -23,10 +23,40 @@
       <span>Cookie Consent</span>
       <small>Configure actions in workflows</small>
     </div>
+
+    <!-- In editor mode, render components inside the tree (no teleport) -->
+    <template v-if="isEditorMode">
+      <CookieBanner
+        v-if="showBannerState"
+        :content="effectiveContent"
+        :temp-preferences="tempPreferences"
+        @accept-all="handleAcceptAll"
+        @decline-all="handleDeclineAll"
+        @open-preferences="handleOpenPreferences"
+        @update-preference="handleUpdatePreference"
+        @close="handleCloseBanner"
+      />
+      <CookiePreferences
+        v-if="showPreferencesState"
+        :content="effectiveContent"
+        :temp-preferences="tempPreferences"
+        :preferences-source="preferencesSource"
+        @close="handleClosePreferences"
+        @accept-all="handleAcceptAll"
+        @decline-all="handleDeclineAll"
+        @save="handleSavePreferences"
+        @update-preference="handleUpdatePreference"
+      />
+      <CookieManager
+        v-if="showManagerState"
+        :content="effectiveContent"
+        @manager-click="handleManagerClick"
+      />
+    </template>
   </div>
 
-  <!-- Teleport fixed-position components to body to escape stacking context -->
-  <teleport to="body" v-if="shouldRenderComponent">
+  <!-- In runtime mode, teleport fixed-position components to body to escape stacking context -->
+  <teleport to="body" v-if="shouldRenderComponent && !isEditorMode">
     <!-- Cookie Banner -->
     <div v-if="showBannerState" class="cc-teleport-wrapper" :style="cssVars">
       <CookieBanner
@@ -163,6 +193,11 @@ export default {
         !this.showBannerState &&
         !this.showPreferencesState
       );
+    },
+    isEditorMode() {
+      // Detect if we're in WeWeb editor mode
+      // In editor mode, we don't use teleport to keep components in the DOM tree
+      return this.content.showEditorPlaceholder === true;
     },
     showManagerState() {
       // If manager is disabled globally, don't show
