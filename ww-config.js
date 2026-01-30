@@ -675,6 +675,17 @@ export default {
         ],
       },
     },
+    zIndex: {
+      label: { en: "Z-Index (Layer Order)", pt: "Z-Index (Ordem de Camadas)" },
+      type: "Number",
+      defaultValue: 9999,
+      section: "style",
+      options: {
+        min: 1,
+        max: 2147483647,
+        step: 1,
+      },
+    },
 
   },
 
